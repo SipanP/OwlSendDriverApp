@@ -17,5 +17,5 @@ expo-deployments:
   stage: deploy
   script:
     - apk add --no-cache bash
-    - npx expo login -u vincentlee -p imperialdrp44
+    - npx expo login -u vincentlee -p $password
     - npx expo publish --non-interactive
