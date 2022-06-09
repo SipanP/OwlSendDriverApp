@@ -4,54 +4,59 @@ import { db } from "./Core/Config";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { useState } from "react";
 
+import { Provider } from "react-redux";
+import { store } from "./store";
+
 export default function App() {
-  const [userDoc, setUserDoc] = useState(null);
+  // const [userDoc, setUserDoc] = useState(null);
 
-  const Create = () => {
-    const myDoc = doc(db, "MyCollection", "MyDocument");
+  // const Create = () => {
+  //   const myDoc = doc(db, "MyCollection", "MyDocument");
 
-    const docData = {
-      name: "John",
-      bio: "Coder",
-    };
+  //   const docData = {
+  //     name: "John",
+  //     bio: "Coder",
+  //   };
 
-    setDoc(myDoc, docData)
-      .then(() => {
-        alert("Document created");
-      })
-      .catch((error) => {
-        alert(error.message);
-      });
-  };
+  //   setDoc(myDoc, docData)
+  //     .then(() => {
+  //       alert("Document created");
+  //     })
+  //     .catch((error) => {
+  //       alert(error.message);
+  //     });
+  // };
 
-  const Read = () => {
-    const myDoc = doc(db, "MyCollection", "MyDocument");
+  // const Read = () => {
+  //   const myDoc = doc(db, "MyCollection", "MyDocument");
 
-    getDoc(myDoc)
-      .then((snapshot) => {
-        if (snapshot.exists) {
-          setUserDoc(snapshot.data());
-        } else {
-          alert("No doc found");
-        }
-      })
-      .catch((error) => {
-        alert(error.message);
-      });
-  };
+  //   getDoc(myDoc)
+  //     .then((snapshot) => {
+  //       if (snapshot.exists) {
+  //         setUserDoc(snapshot.data());
+  //       } else {
+  //         alert("No doc found");
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       alert(error.message);
+  //     });
+  // };
 
-  const Update = () => {};
+  // const Update = () => {};
 
-  const Delete = () => {};
+  // const Delete = () => {};
 
   return (
-    <View style={styles.container}>
-      <Button title="Create New doc" onPress={Create}></Button>
+    <Provider store={store}>
+      <View style={styles.container}>
+        {/* <Button title="Create New doc" onPress={Create}></Button>
       <Button title="Read Doc" onPress={Read}></Button>
-      {userDoc != null && <Text>Bio: {userDoc.bio}</Text>}
-      {/* <Text>Hey Brad, Let's build our User Instant Delivery App!</Text>
-      <StatusBar style="auto" /> */}
-    </View>
+      {userDoc != null && <Text>Bio: {userDoc.bio}</Text>} */}
+        <Text>Hey Brad, Let's build our User Instant Delivery App!</Text>
+        {/* <StatusBar style="auto" /> */}
+      </View>
+    </Provider>
   );
 }
 
