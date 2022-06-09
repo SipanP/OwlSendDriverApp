@@ -1,6 +1,6 @@
 import { StatusBar } from "expo-status-bar";
 import { Button, StyleSheet, Text, View } from "react-native";
-import { db } from "./Core/Config";
+import { db } from "./app/core/Config";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { useState } from "react";
 import { Provider } from "react-redux";
