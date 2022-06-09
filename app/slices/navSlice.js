@@ -3,9 +3,10 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   origin: {
     location: {
-      lat: 51.5072,
-      lng: 0.1276,
+      lat: 51.5072178,
+      lng: -0.1275862,
     },
+    description: "London, UK",
   },
   destination: null,
   travelTimeInformation: null,
