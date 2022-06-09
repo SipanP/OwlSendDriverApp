@@ -6,6 +6,7 @@ import { useState } from "react";
 
 import { Provider } from "react-redux";
 import { store } from "./store";
+import HomeScreen from "./app/screens/HomeScreen";
 
 export default function App() {
   // const [userDoc, setUserDoc] = useState(null);
@@ -53,7 +54,8 @@ export default function App() {
         {/* <Button title="Create New doc" onPress={Create}></Button>
       <Button title="Read Doc" onPress={Read}></Button>
       {userDoc != null && <Text>Bio: {userDoc.bio}</Text>} */}
-        <Text>Hey Brad, Let's build our User Instant Delivery App!</Text>
+
+        <HomeScreen />
         {/* <StatusBar style="auto" /> */}
       </View>
     </Provider>
