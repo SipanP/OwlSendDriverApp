@@ -49,14 +49,7 @@ export default function App() {
 
   return (
     <Provider store={store}>
-      <View style={styles.container}>
-        {/* <Button title="Create New doc" onPress={Create}></Button>
-      <Button title="Read Doc" onPress={Read}></Button>
-      {userDoc != null && <Text>Bio: {userDoc.bio}</Text>} */}
-
-        <HomeScreen />
-        {/* <StatusBar style="auto" /> */}
-      </View>
+      <HomeScreen />
     </Provider>
   );
 }
