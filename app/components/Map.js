@@ -9,8 +9,8 @@ const Map = () => {
       style={tw`flex-1`}
       mapType="mutedStandard"
       initialRegion={{
-        latitude: 0,
-        longitude: 0,
+        latitude: 51.5072,
+        longitude: 0.1276,
         latitudeDelta: 0.005,
         longitudeDelta: 0.005,
       }}
