@@ -55,11 +55,42 @@ const HomeScreen = () => {
                 description: data.description,
               })
             );
-            dispatch(setDestination(null));
           }}
           fetchDetails={true}
           returnKeyType={"search"}
           placeholder="Where from?"
+          nearbyPlacesAPI="GooglePlacesSearch"
+          debounce={400}
+          query={{
+            key: "AIzaSyCE2Ct-iHuI_2nNALaRghtfpNBj1gPhfcY",
+            language: "en",
+          }}
+        />
+        <GooglePlacesAutocomplete
+          styles={{
+            textInputContainer: {
+              backgroundColor: "grey",
+            },
+            textInput: {
+              height: 38,
+              color: "#5d5d5d",
+              fontSize: 16,
+            },
+            container: {
+              flex: 0,
+            },
+          }}
+          onPress={(data, details = null) => {
+            dispatch(
+              setDestination({
+                location: details.geometry.location,
+                description: data.description,
+              })
+            );
+          }}
+          fetchDetails={true}
+          returnKeyType={"search"}
+          placeholder="Where to?"
           nearbyPlacesAPI="GooglePlacesSearch"
           debounce={400}
           query={{
