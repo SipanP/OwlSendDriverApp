@@ -1,6 +1,8 @@
 import React from "react";
 import { StyleSheet, Text, View, SafeAreaView, Image } from "react-native";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
+import tw from "twrnc";
+import Map from "../components/Map";
 
 const HomeScreen = () => {
   return (
@@ -9,6 +11,9 @@ const HomeScreen = () => {
         height: "100%",
       }}
     >
+      <View style={tw`h-1/2`}>
+        <Map />
+      </View>
       <View
         styles={{
           padding: 5,

@@ -3,7 +3,6 @@ import { Button, StyleSheet, Text, View } from "react-native";
 import { db } from "./Core/Config";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { useState } from "react";
-
 import { Provider } from "react-redux";
 import { store } from "./store";
 import HomeScreen from "./app/screens/HomeScreen";
