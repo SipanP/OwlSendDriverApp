@@ -1,5 +1,5 @@
 export default {
-  primary: "darkcyan", //"#2C8585",
+  primary: "slateblue", //"#6A5ACD",
   secondary: "firebrick", //"#DC2C2C",
   dark: "black",
 };

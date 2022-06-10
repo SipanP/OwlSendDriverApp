@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { StyleSheet, Text, View, SafeAreaView, Image } from "react-native";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import { useDispatch } from "react-redux";
@@ -7,11 +7,14 @@ import Map from "../components/Map";
 import { setDestination, setOrigin } from "../slices/navSlice";
 import NewOrder from "../components/NewOrder";
 import { db } from "../core/Config";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { doc, getDoc, onSnapshot, setDoc } from "firebase/firestore";
 import { useState } from "react";
 
 const HomeScreen = () => {
-  const [userDoc, setUserDoc] = useState(null);
+  const [userDoc, setUserDoc] = useState({
+    pickup: {},
+    dropoff: {},
+  });
 
   const Create = () => {
     const myDoc = doc(db, "DriverOrders", "MyDocument");
@@ -30,9 +33,8 @@ const HomeScreen = () => {
       });
   };
 
+  const myDoc = doc(db, "DriverOrders", "0987654321");
   const Read = () => {
-    const myDoc = doc(db, "DriverOrders", "0987654321");
-
     getDoc(myDoc)
       .then((snapshot) => {
         if (snapshot.exists) {
@@ -51,12 +53,17 @@ const HomeScreen = () => {
   const Delete = () => {};
 
   const dispatch = useDispatch();
-  // Read();
+
+  useEffect(() => {
+    // Read();
+    return onSnapshot(myDoc, (doc) => {
+      setUserDoc(doc.data());
+    });
+  }, []);
   return (
     <View style={styles.container}>
       <Map style={{ flex: 1 }} />
-      <NewOrder />
-      {/* <NewOrder pickup={userDoc.pickup} /> */}
+      <NewOrder pickup={userDoc.pickup} dropoff={userDoc.dropoff} />
     </View>
   );
 };
