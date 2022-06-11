@@ -3,20 +3,20 @@ import React from "react";
 import DeliveryInformationCard from "./DeliveryInformationCard";
 import Colors from "../core/Colors";
 
-const NewOrder = ({ pickup, dropoff }) => {
+const NewOrder = ({ userDoc }) => {
   return (
     <View style={styles.container}>
       <DeliveryInformationCard
-        name={pickup.name}
-        type={pickup.type}
-        address={pickup.address}
-        isOnRoute={true}
+        name={userDoc?.pickup.name}
+        type={userDoc?.pickup.type}
+        address={userDoc?.pickup.address}
+        isOnRoute={userDoc?.status === "pickup"}
       />
       <DeliveryInformationCard
-        name={dropoff.name}
-        type={dropoff.type}
-        address={dropoff.address}
-        isOnRoute={false}
+        name={userDoc?.dropoff.name}
+        type={userDoc?.dropoff.type}
+        address={userDoc?.dropoff.address}
+        isOnRoute={userDoc?.status === "dropoff"}
       />
     </View>
   );

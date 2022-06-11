@@ -63,7 +63,8 @@ const HomeScreen = () => {
   return (
     <View style={styles.container}>
       <Map style={{ flex: 1 }} />
-      <NewOrder pickup={userDoc.pickup} dropoff={userDoc.dropoff} />
+      <NewOrder userDoc={userDoc} />
+      {/* pickup={userDoc.pickup} dropoff={userDoc.dropoff} /> */}
     </View>
   );
 };
