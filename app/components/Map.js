@@ -1,10 +1,9 @@
 import React, { useEffect, useRef } from "react";
-import { StyleSheet, Text, View, Image } from "react-native";
+import { Image, StyleSheet } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import MapViewDirections from "react-native-maps-directions";
 import { useSelector } from "react-redux";
-import tw from "twrnc";
-import { selectOrigin, selectDestination } from "../slices/navSlice";
+import { selectDestination, selectOrigin } from "../slices/navSlice";
 
 const Map = () => {
   const origin = useSelector(selectOrigin);
@@ -21,7 +20,7 @@ const Map = () => {
   return (
     <MapView
       ref={mapRef}
-      style={tw`flex-1`}
+      style={{ flex: 1 }}
       mapType="mutedStandard"
       region={{
         latitude: origin.location.lat,

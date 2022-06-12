@@ -1,14 +1,10 @@
-import React, { useEffect } from "react";
-import { StyleSheet, Text, View, SafeAreaView, Image } from "react-native";
-import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
+import { doc, getDoc, onSnapshot, setDoc } from "firebase/firestore";
+import React, { useEffect, useState } from "react";
+import { StyleSheet, View } from "react-native";
 import { useDispatch } from "react-redux";
-import tw from "twrnc";
 import Map from "../components/Map";
-import { setDestination, setOrigin } from "../slices/navSlice";
 import NewOrder from "../components/NewOrder";
 import { db } from "../core/Config";
-import { doc, getDoc, onSnapshot, setDoc } from "firebase/firestore";
-import { useState } from "react";
 
 const HomeScreen = () => {
   const [userDoc, setUserDoc] = useState({
