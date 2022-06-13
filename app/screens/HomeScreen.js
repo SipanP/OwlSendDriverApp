@@ -88,8 +88,8 @@ const HomeScreen = () => {
       dispatch(
         setOrigin({
           location: {
-            lat: userDoc.pickup.latitude,
-            lng: userDoc.pickup.longitude,
+            lat: userDoc.pickup.location.Latitude,
+            lng: userDoc.pickup.location.Longitude,
           },
           description: userDoc.pickup.address,
         })
@@ -97,8 +97,8 @@ const HomeScreen = () => {
       dispatch(
         setDestination({
           location: {
-            lat: userDoc.dropoff.latitude,
-            lng: userDoc.dropoff.longitude,
+            lat: userDoc.dropoff.location.Latitude,
+            lng: userDoc.dropoff.location.Longitude,
           },
           description: userDoc.dropoff.address,
         })

@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Colors from "../core/Colors";
 
-const LoginScreen = ({ navigation }) => {
+const StartRegisterScreen = ({ navigation }) => {
   const [tel, setTel] = useState("");
   const [password, setPassword] = useState("");
   const [firstName, setFirstName] = useState("");
@@ -61,7 +61,7 @@ const LoginScreen = ({ navigation }) => {
   );
 };
 
-export default LoginScreen;
+export default StartRegisterScreen;
 
 const styles = StyleSheet.create({
   container: {
