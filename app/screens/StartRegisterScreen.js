@@ -1,11 +1,5 @@
-import {
-  KeyboardAvoidingView,
-  StyleSheet,
-  Text,
-  View,
-  Platform,
-} from "react-native";
-import { Button, Image, Input } from "react-native-elements";
+import { KeyboardAvoidingView, StyleSheet, View, Platform } from "react-native";
+import { Button, Image, Input, Text } from "react-native-elements";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Colors from "../core/Colors";
@@ -13,8 +7,10 @@ import Colors from "../core/Colors";
 const LoginScreen = ({ navigation }) => {
   const [tel, setTel] = useState("");
   const [password, setPassword] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
 
-  const signIn = () => {
+  const continueRegistration = () => {
     console.log("login");
   };
 
@@ -28,36 +24,38 @@ const LoginScreen = ({ navigation }) => {
         source={require("../assets/owl-send-logo-transparent-bg.png")}
         style={{ width: 419, height: 190 }}
       />
+      <Text h4 style={{ marginTop: 20, marginBottom: 10, fontWeight: "700" }}>
+        Create a driver account
+      </Text>
       <View style={styles.inputContainer}>
+        <View style={{ width: 200, flexDirection: "row" }}>
+          <Input
+            placeholder="First Name"
+            type="text"
+            value={firstName}
+            onChangeText={(text) => setFirstName(text)}
+          />
+          <Input
+            placeholder="Last Name"
+            type="text"
+            value={lastName}
+            onChangeText={(text) => setLastName(text)}
+          />
+        </View>
         <Input
           placeholder="Phone number"
           type="tel"
-          // autoFocus
           value={tel}
           onChangeText={(text) => setTel(text)}
           keyboardType={"phone-pad"}
-        />
-        <Input
-          placeholder="Password"
-          type="password"
-          secureTextEntry
-          value={password}
-          onChangeText={(text) => setPassword(text)}
-          onSubmitEditing={signIn}
+          onSubmitEditing={continueRegistration}
         />
       </View>
       <Button
         buttonStyle={styles.buttonStyle}
-        title="Login"
+        title="Continue"
         containerStyle={styles.button}
-        onPress={signIn}
-      />
-      <Button
-        title="Register"
-        titleStyle={{ color: Colors.primary }}
-        containerStyle={styles.button}
-        type="outline"
-        onPress={() => navigation.navigate("Register")}
+        onPress={() => navigation.navigate("ContinueRegister")}
       />
     </KeyboardAvoidingView>
   );
@@ -73,7 +71,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   inputContainer: {
-    width: 300,
+    width: 400,
   },
   button: {
     width: 200,

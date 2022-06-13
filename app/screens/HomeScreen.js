@@ -106,24 +106,6 @@ const HomeScreen = () => {
     });
   }, []);
 
-  dispatch(
-    setOrigin({
-      location: {
-        lat: userDoc.pickup.latitude,
-        lng: userDoc.pickup.longitude,
-      },
-      description: userDoc.pickup.address,
-    })
-  );
-  dispatch(
-    setDestination({
-      location: {
-        lat: userDoc.dropoff.latitude,
-        lng: userDoc.dropoff.longitude,
-      },
-      description: userDoc.dropoff.address,
-    })
-  );
   return (
     <View style={styles.container}>
       <Map style={{ flex: 1 }} />

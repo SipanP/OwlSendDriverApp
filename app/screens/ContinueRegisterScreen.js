@@ -11,14 +11,11 @@ import { Button, Image, Input, Text, ButtonGroup } from "react-native-elements";
 import { StatusBar } from "expo-status-bar";
 
 const RegisterScreen = ({ navigation }) => {
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [tel, setTel] = useState("");
   const [password, setPassword] = useState("");
-  const [length, setLength] = useState(0);
-  const [width, setWidth] = useState(0);
-  const [height, setHeight] = useState(0);
-  const [weight, setWeight] = useState(0);
+  const [length, setLength] = useState("");
+  const [width, setWidth] = useState("");
+  const [height, setHeight] = useState("");
+  const [weight, setWeight] = useState("");
   const [selectedVehicle, setSelectedVehicle] = useState(0);
 
   const register = () => {};
@@ -29,32 +26,8 @@ const RegisterScreen = ({ navigation }) => {
       style={styles.container}
     >
       <StatusBar style="light" />
-      <Text h3 style={{ marginBottom: 50, fontWeight: "700" }}>
-        Create a driver account
-      </Text>
-      <View style={styles.inputContainter}>
-        <View style={{ width: 200, flexDirection: "row" }}>
-          <Input
-            placeholder="First Name"
-            type="text"
-            value={firstName}
-            onChangeText={(text) => setFirstName(text)}
-          />
-          <Input
-            placeholder="Last Name"
-            type="text"
-            value={lastName}
-            onChangeText={(text) => setLastName(text)}
-          />
-        </View>
 
-        <Input
-          placeholder="Phone number"
-          type="tel"
-          value={tel}
-          onChangeText={(text) => setTel(text)}
-          keyboardType={"phone-pad"}
-        />
+      <View style={styles.inputContainter}>
         <Text style={{ color: "grey", marginLeft: 10 }}>
           What type of vehicle will you use for deliveries?
         </Text>
@@ -80,7 +53,6 @@ const RegisterScreen = ({ navigation }) => {
           <Input
             placeholder="Length (cm)"
             keyboardType="numeric"
-            type="number"
             value={length}
             onChangeText={(text) => setLength(text)}
             style={styles.sizeField}
@@ -88,7 +60,6 @@ const RegisterScreen = ({ navigation }) => {
           <Input
             placeholder="Width (cm)"
             keyboardType="numeric"
-            type="number"
             value={width}
             onChangeText={(text) => setWidth(text)}
             style={styles.sizeField}
@@ -96,7 +67,6 @@ const RegisterScreen = ({ navigation }) => {
           <Input
             placeholder="Height (cm)"
             keyboardType="numeric"
-            type="number"
             value={height}
             onChangeText={(text) => setHeight(text)}
             style={styles.sizeField}
@@ -104,20 +74,11 @@ const RegisterScreen = ({ navigation }) => {
           <Input
             placeholder="Weight (kg)"
             keyboardType="numeric"
-            type="number"
             value={weight}
             onChangeText={(text) => setWeight(text)}
             style={styles.sizeField}
           />
         </View>
-        <Input
-          placeholder="Password"
-          type="password"
-          secureTextEntry
-          value={password}
-          onChangeText={(text) => setPassword(text)}
-          onSubmitEditing={register}
-        />
       </View>
       <Button
         title="Register"

@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
     height: "45%",
     position: "absolute",
     bottom: 0,
-    backgroundColor: Colors.primary,
+    backgroundColor: Colors.primarySeeThrough,
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
   },

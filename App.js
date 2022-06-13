@@ -6,8 +6,8 @@ import { useState } from "react";
 import { Provider } from "react-redux";
 import { store } from "./store";
 import HomeScreen from "./app/screens/HomeScreen";
-import RegisterScreen from "./app/screens/RegisterScreen";
-import LoginScreen from "./app/screens/LoginScreen";
+import ContinueRegisterScreen from "./app/screens/ContinueRegisterScreen";
+import StartRegisterScreen from "./app/screens/StartRegisterScreen";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -65,18 +65,17 @@ export default function App() {
       <NavigationContainer>
         <Stack.Navigator
           screenOptions={globalScreenOptions}
-          initialRouteName="Login"
+          initialRouteName="StartRegister"
         >
           <Stack.Screen
-            name="Login"
-            component={LoginScreen}
+            name="StartRegister"
+            component={StartRegisterScreen}
             options={{ headerShown: false }}
           />
           <Stack.Screen
-            name="Register"
-            component={RegisterScreen}
-            // options={{ headerShown: false }}
-            options={{ headerBackTitle: "Login" }}
+            name="ContinueRegister"
+            component={ContinueRegisterScreen}
+            options={{ headerTitle: "Enter driver details" }}
           />
           <Stack.Screen
             name="Home"
