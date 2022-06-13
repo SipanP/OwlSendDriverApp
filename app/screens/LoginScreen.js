@@ -32,7 +32,7 @@ const LoginScreen = ({ navigation }) => {
         <Input
           placeholder="Phone number"
           type="tel"
-          autoFocus
+          // autoFocus
           value={tel}
           onChangeText={(text) => setTel(text)}
           keyboardType={"phone-pad"}
