@@ -9,10 +9,9 @@ import {
   RadioButton,
 } from "react-native";
 
-const RegisterScreen = () => {
+const RegisterScreen = ({ navigation }) => {
   return (
     <View style={styles.registerContainer}>
-      <Text>Register</Text>
       <Formik
         initialValues={{ firstName: "", lastName: "", phoneNumber: "" }}
         onSubmit={(values) => console.log(values)}
@@ -46,7 +45,7 @@ const RegisterScreen = () => {
               value={values.firstName}
               keyboardType="numeric"
             />
-            
+
             <Button onPress={handleSubmit} title="Submit" />
           </>
         )}
@@ -70,6 +69,5 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
 });
-
 
 export default RegisterScreen;
