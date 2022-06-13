@@ -5,8 +5,39 @@ import { useDispatch } from "react-redux";
 import Map from "../components/Map";
 import NewOrder from "../components/NewOrder";
 import { db } from "../core/Config";
+import { setOrigin, setDestination } from "../slices/navSlice";
+import * as Location from "expo-location";
+import GoButton from "../components/GoButton";
+import { Overlay } from "react-native-elements";
 
 const HomeScreen = () => {
+  // // Get Location permission
+  // const [location, setLocation] = useState(null);
+  // const [errorMsg, setErrorMsg] = useState(null);
+
+  // useEffect(() => {
+  //   (async () => {
+  //     let { status } = await Location.requestForegroundPermissionsAsync();
+  //     if (status !== "granted") {
+  //       setErrorMsg("Permission to access location was denied");
+  //       return;
+  //     }
+
+  //     let location = await Location.getCurrentPositionAsync({});
+  //     setLocation(location);
+  //   })();
+  // }, []);
+
+  // let text = "Waiting..";
+  // if (errorMsg) {
+  //   text = errorMsg;
+  // } else if (location) {
+  //   text = JSON.stringify(location);
+  //   console.log(text);
+  // }
+
+  const [online, setOnline] = useState(false);
+
   const [userDoc, setUserDoc] = useState({
     pickup: {},
     dropoff: {},
@@ -54,13 +85,62 @@ const HomeScreen = () => {
     // Read();
     return onSnapshot(myDoc, (doc) => {
       setUserDoc(doc.data());
+      dispatch(
+        setOrigin({
+          location: {
+            lat: userDoc.pickup.latitude,
+            lng: userDoc.pickup.longitude,
+          },
+          description: userDoc.pickup.address,
+        })
+      );
+      dispatch(
+        setDestination({
+          location: {
+            lat: userDoc.dropoff.latitude,
+            lng: userDoc.dropoff.longitude,
+          },
+          description: userDoc.dropoff.address,
+        })
+      );
     });
   }, []);
+
+  dispatch(
+    setOrigin({
+      location: {
+        lat: userDoc.pickup.latitude,
+        lng: userDoc.pickup.longitude,
+      },
+      description: userDoc.pickup.address,
+    })
+  );
+  dispatch(
+    setDestination({
+      location: {
+        lat: userDoc.dropoff.latitude,
+        lng: userDoc.dropoff.longitude,
+      },
+      description: userDoc.dropoff.address,
+    })
+  );
   return (
     <View style={styles.container}>
       <Map style={{ flex: 1 }} />
-      <NewOrder userDoc={userDoc} />
-      {/* pickup={userDoc.pickup} dropoff={userDoc.dropoff} /> */}
+      <View
+        style={{
+          position: "absolute",
+          left: 0,
+          right: 0,
+          bottom: 140,
+          alignItems: "center",
+        }}
+      >
+        <View style={{ bottom: 0 }}>
+          <GoButton />
+        </View>
+      </View>
+      {/* <NewOrder userDoc={userDoc} /> */}
     </View>
   );
 };
