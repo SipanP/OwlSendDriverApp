@@ -64,7 +64,7 @@ const ContinueRegisterScreen = ({ navigation }) => {
           In what area are you willing to deliver?
         </Text>
         <View style={{ flexDirection: "row" }}>
-          <View style={{ width: "50%" }}>
+          <View style={{ width: "45%" }}>
             <GooglePlacesAutocomplete
               styles={styles.inputStyles}
               // onPress={(data, details = null) => {
@@ -91,9 +91,11 @@ const ContinueRegisterScreen = ({ navigation }) => {
           </View>
           <CheckBox
             containerStyle={{
-              width: "25%",
+              width: "30%",
               backgroundColor: "rgba(106, 90, 205, 0.0)",
-              paddingRight: 0,
+              paddingLeft: 10,
+              paddingRight: 5,
+              marginLeft: 0,
               marginRight: 0,
             }}
             textStyle={{ fontWeight: "500" }}
@@ -170,7 +172,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   inputContainter: {
-    width: 400,
+    width: "100%",
   },
   buttonStyle: {
     backgroundColor: Colors.primary,
@@ -181,7 +183,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   sizeField: {
-    fontSize: 14,
+    fontSize: 12,
   },
   inputStyles: {
     container: {

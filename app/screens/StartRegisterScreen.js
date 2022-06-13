@@ -1,7 +1,12 @@
-import { KeyboardAvoidingView, StyleSheet, View, Platform } from "react-native";
-import { Button, Image, Input, Text } from "react-native-elements";
 import React, { useState } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
+import {
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  StyleSheet,
+  View,
+} from "react-native";
+import { Button, Input, Text } from "react-native-elements";
 import Colors from "../core/Colors";
 
 const StartRegisterScreen = ({ navigation }) => {
@@ -22,20 +27,22 @@ const StartRegisterScreen = ({ navigation }) => {
     >
       <Image
         source={require("../assets/owl-send-logo-transparent-bg.png")}
-        style={{ width: 419, height: 190 }}
+        style={{ width: "100%", height: "20%" }}
       />
       <Text h4 style={{ marginTop: 20, marginBottom: 10, fontWeight: "700" }}>
         Create a driver account
       </Text>
       <View style={styles.inputContainer}>
-        <View style={{ width: 200, flexDirection: "row" }}>
+        <View style={{ flexDirection: "row" }}>
           <Input
+            containerStyle={{ width: "50%" }}
             placeholder="First Name"
             type="text"
             value={firstName}
             onChangeText={(text) => setFirstName(text)}
           />
           <Input
+            containerStyle={{ width: "50%" }}
             placeholder="Last Name"
             type="text"
             value={lastName}
@@ -71,7 +78,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   inputContainer: {
-    width: 400,
+    width: "100%",
   },
   button: {
     width: 200,
