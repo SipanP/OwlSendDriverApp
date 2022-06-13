@@ -76,6 +76,7 @@ export default function App() {
             name="Register"
             component={RegisterScreen}
             // options={{ headerShown: false }}
+            options={{ headerBackTitle: "Login" }}
           />
           <Stack.Screen
             name="Home"
