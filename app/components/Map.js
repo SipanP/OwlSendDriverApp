@@ -3,6 +3,7 @@ import { Image, StyleSheet } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import MapViewDirections from "react-native-maps-directions";
 import { useSelector } from "react-redux";
+import Colors from "../core/Colors";
 import { selectDestination, selectOrigin } from "../slices/navSlice";
 
 const Map = () => {
@@ -16,9 +17,12 @@ const Map = () => {
       edgePadding: { top: 100, right: 100, bottom: 100, left: 100 },
     });
   }, [origin, destination]);
-
   return (
     <MapView
+      provider={MapView.PROVIDER_GOOGLE}
+      showsUserLocation={true}
+      followsUserLocation={true}
+      showsMyLocationButton={true}
       ref={mapRef}
       style={{ flex: 1 }}
       mapType="mutedStandard"
@@ -67,7 +71,7 @@ const Map = () => {
           destination={destination.description}
           apikey="AIzaSyCE2Ct-iHuI_2nNALaRghtfpNBj1gPhfcY"
           strokeWidth={2}
-          strokeColor="red"
+          strokeColor={Colors.primary}
         />
       )}
     </MapView>
