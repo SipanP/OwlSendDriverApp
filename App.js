@@ -6,8 +6,21 @@ import { useState } from "react";
 import { Provider } from "react-redux";
 import { store } from "./store";
 import HomeScreen from "./app/screens/HomeScreen";
+import RegisterScreen from "./app/screens/RegisterScreen";
+import LoginScreen from "./app/screens/LoginScreen";
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import Colors from "./app/core/Colors";
+
+const globalScreenOptions = {
+  headerStyle: { backgroundColor: Colors.primary },
+  headerTitleStyle: { color: "white" },
+  headerTintColor: "white",
+};
 
 export default function App() {
+  const Stack = createNativeStackNavigator();
   // const [userDoc, setUserDoc] = useState(null);
 
   // const Create = () => {
@@ -49,7 +62,28 @@ export default function App() {
 
   return (
     <Provider store={store}>
-      <HomeScreen />
+      <NavigationContainer>
+        <Stack.Navigator
+          screenOptions={globalScreenOptions}
+          initialRouteName="Login"
+        >
+          <Stack.Screen
+            name="Login"
+            component={LoginScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Register"
+            component={RegisterScreen}
+            // options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Home"
+            component={HomeScreen}
+            options={{ headerShown: false }}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
     </Provider>
   );
 }
