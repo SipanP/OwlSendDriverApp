@@ -27,7 +27,7 @@ const StartRegisterScreen = ({ navigation }) => {
     >
       <Image
         source={require("../assets/owl-send-logo-transparent-bg.png")}
-        style={{ width: "100%", height: "20%" }}
+        style={{ width: "100%", height: 170 }}
       />
       <Text h4 style={{ marginTop: 20, marginBottom: 10, fontWeight: "700" }}>
         Create a driver account
