@@ -1,24 +1,25 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useRoute } from "@react-navigation/native";
+import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
-import {
-  StyleSheet,
-  View,
-  KeyboardAvoidingView,
-  ScrollView,
-} from "react-native";
-import Colors from "../core/Colors";
+import { KeyboardAvoidingView, StyleSheet, View } from "react-native";
 import {
   Button,
-  Image,
-  Input,
-  Text,
   ButtonGroup,
   CheckBox,
+  Input,
+  Text,
 } from "react-native-elements";
-import { StatusBar } from "expo-status-bar";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
+import Colors from "../core/Colors";
 
-const ContinueRegisterScreen = ({ navigation }) => {
-  const [password, setPassword] = useState("");
+const ContinueRegisterScreen = ({
+  userProfile,
+  setUserProfile,
+  setEditProfile,
+}) => {
+  const route = useRoute();
+  const { firstName, lastName, tel } = route.params;
   const [length, setLength] = useState("");
   const [width, setWidth] = useState("");
   const [height, setHeight] = useState("");
@@ -27,14 +28,29 @@ const ContinueRegisterScreen = ({ navigation }) => {
   const [liveLocation, setLiveLocation] = useState(false);
   const [radius, setRadius] = useState("");
 
-  const register = () => {};
-  const homePlace = {
-    description: "Home",
-    geometry: { location: { lat: 48.8152937, lng: 2.4597668 } },
-  };
-  const workPlace = {
-    description: "Work",
-    geometry: { location: { lat: 48.8496818, lng: 2.2940881 } },
+  const register = async () => {
+    const profile = {
+      firstName: firstName,
+      lastName: lastName,
+      phone: tel,
+      length: length,
+      width: width,
+      height: height,
+      weight: weight,
+      selectedVehicle: selectedVehicle,
+      liveLocation: liveLocation,
+      radius: radius,
+    };
+
+    // Save user profile into persistent storage on device.
+    try {
+      await AsyncStorage.setItem("profile", JSON.stringify({ profile }));
+    } catch (e) {
+      console.log(e);
+    }
+
+    setUserProfile(profile);
+    setEditProfile(false);
   };
 
   return (

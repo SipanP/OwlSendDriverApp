@@ -8,16 +8,13 @@ import {
 } from "react-native";
 import { Button, Input, Text } from "react-native-elements";
 import Colors from "../core/Colors";
+import { useNavigation } from "@react-navigation/native";
 
-const StartRegisterScreen = ({ navigation }) => {
+const StartRegisterScreen = ({ userProfile }) => {
+  const navigation = useNavigation();
   const [tel, setTel] = useState("");
-  const [password, setPassword] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-
-  const continueRegistration = () => {
-    console.log("login");
-  };
 
   return (
     <KeyboardAvoidingView
@@ -55,14 +52,19 @@ const StartRegisterScreen = ({ navigation }) => {
           value={tel}
           onChangeText={(text) => setTel(text)}
           keyboardType={"phone-pad"}
-          onSubmitEditing={continueRegistration}
         />
       </View>
       <Button
         buttonStyle={styles.buttonStyle}
         title="Continue"
         containerStyle={styles.button}
-        onPress={() => navigation.navigate("ContinueRegister")}
+        onPress={() =>
+          navigation.navigate("ContinueRegister", {
+            firstName: firstName,
+            lastName: lastName,
+            tel: tel,
+          })
+        }
       />
     </KeyboardAvoidingView>
   );

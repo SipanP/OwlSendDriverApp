@@ -2,15 +2,12 @@ import { doc, getDoc, onSnapshot, setDoc } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { useDispatch } from "react-redux";
-import Map from "../components/Map";
-import NewOrder from "../components/NewOrder";
-import { db } from "../core/Config";
-import { setOrigin, setDestination } from "../slices/navSlice";
-import * as Location from "expo-location";
 import GoButton from "../components/GoButton";
-import { Overlay } from "react-native-elements";
+import Map from "../components/Map";
+import { db } from "../core/Config";
+import { setDestination, setOrigin } from "../slices/navSlice";
 
-const HomeScreen = () => {
+const HomeScreen = ({ navigation, userProfile }) => {
   // // Get Location permission
   // const [location, setLocation] = useState(null);
   // const [errorMsg, setErrorMsg] = useState(null);
@@ -82,6 +79,8 @@ const HomeScreen = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    console.log(userProfile);
+
     // Read();
     return onSnapshot(myDoc, (doc) => {
       setUserDoc(doc.data());
