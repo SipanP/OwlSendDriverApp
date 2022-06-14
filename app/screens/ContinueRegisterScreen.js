@@ -1,5 +1,4 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useRoute } from "@react-navigation/native";
 import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
 import { KeyboardAvoidingView, StyleSheet, View } from "react-native";
@@ -14,11 +13,11 @@ import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplet
 import Colors from "../core/Colors";
 
 const ContinueRegisterScreen = ({
+  route,
   userProfile,
   setUserProfile,
   setEditProfile,
 }) => {
-  const route = useRoute();
   const { firstName, lastName, tel } = route.params;
   const [length, setLength] = useState("");
   const [width, setWidth] = useState("");
@@ -48,7 +47,7 @@ const ContinueRegisterScreen = ({
     } catch (e) {
       console.log(e);
     }
-
+    console.log("Success!");
     setUserProfile(profile);
     setEditProfile(false);
   };

@@ -8,10 +8,8 @@ import {
 } from "react-native";
 import { Button, Input, Text } from "react-native-elements";
 import Colors from "../core/Colors";
-import { useNavigation } from "@react-navigation/native";
 
-const StartRegisterScreen = ({ userProfile }) => {
-  const navigation = useNavigation();
+const StartRegisterScreen = ({ navigation, userProfile }) => {
   const [tel, setTel] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");

@@ -84,6 +84,7 @@ const HomeScreen = ({ navigation, userProfile }) => {
     // Read();
     return onSnapshot(myDoc, (doc) => {
       setUserDoc(doc.data());
+      console.log(doc.data(), userDoc);
       dispatch(
         setOrigin({
           location: {

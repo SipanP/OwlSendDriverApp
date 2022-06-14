@@ -9,6 +9,7 @@ import ContinueRegisterScreen from "./app/screens/ContinueRegisterScreen";
 import HomeScreen from "./app/screens/HomeScreen";
 import StartRegisterScreen from "./app/screens/StartRegisterScreen";
 import { store } from "./store";
+import { StatusBar } from "expo-status-bar";
 
 const globalScreenOptions = {
   headerStyle: { backgroundColor: Colors.primary },
@@ -23,7 +24,7 @@ export default function App() {
 
   const getUserProfile = async () => {
     // Get user profile from device storage.
-    // AsyncStorage.clear(); // Uncomment to clear user profile
+    AsyncStorage.clear(); // Uncomment to clear user profile
     try {
       const user = JSON.parse(await AsyncStorage.getItem("profile"));
       if (user) {
@@ -34,19 +35,32 @@ export default function App() {
     }
   };
 
-  const Home = () => {
+  const Home = ({ navigation, route }) => {
     return (
-      <HomeScreen userProfile={userProfile} setEditProfile={setEditProfile} />
+      <HomeScreen
+        navigation={navigation}
+        route={route}
+        userProfile={userProfile}
+        setEditProfile={setEditProfile}
+      />
     );
   };
 
-  const StartRegister = () => {
-    return <StartRegisterScreen userProfile={userProfile} />;
+  const StartRegister = ({ navigation, route }) => {
+    return (
+      <StartRegisterScreen
+        navigation={navigation}
+        route={route}
+        userProfile={userProfile}
+      />
+    );
   };
 
-  const ContinueRegister = () => {
+  const ContinueRegister = ({ navigation, route }) => {
     return (
       <ContinueRegisterScreen
+        navigation={navigation}
+        route={route}
         userProfile={userProfile}
         setUserProfile={setUserProfile}
         setEditProfile={setEditProfile}
@@ -61,6 +75,7 @@ export default function App() {
   return (
     <Provider store={store}>
       <NavigationContainer>
+        <StatusBar style="dark" />
         <Stack.Navigator screenOptions={globalScreenOptions}>
           {userProfile && !editProfile ? (
             <Stack.Screen
