@@ -20,7 +20,9 @@ const Map = ({ origin, destination }) => {
       return;
     }
 
-    let location = await Location.getCurrentPositionAsync({});
+    let location = await Location.getCurrentPositionAsync({
+      accuracy: Location.Accuracy.Balanced,
+    });
     setCurrentLocation(location.coords);
   };
 
@@ -38,7 +40,6 @@ const Map = ({ origin, destination }) => {
     <MapView
       provider={MapView.PROVIDER_GOOGLE}
       showsUserLocation={true}
-      followsUserLocation={true}
       showsMyLocationButton={true}
       ref={mapRef}
       style={{ flex: 1 }}
