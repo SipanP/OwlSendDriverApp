@@ -33,6 +33,7 @@ const ContinueRegisterScreen = ({
   const [selectedVehicle, setSelectedVehicle] = useState(0);
   const [liveLocation, setLiveLocation] = useState(false);
   const [radius, setRadius] = useState("");
+  const [centerAddress, setCenterAddress] = useState({});
 
   const register = async () => {
     const profile = {
@@ -46,6 +47,7 @@ const ContinueRegisterScreen = ({
       selectedVehicle: selectedVehicle,
       liveLocation: liveLocation,
       radius: radius,
+      centerAddress: centerAddress,
     };
 
     // Save user profile into persistent storage on device.
@@ -60,7 +62,6 @@ const ContinueRegisterScreen = ({
 
   const ref = useRef();
 
-  const [currentLocation, setCurrentLocation] = useState("");
   const getCurrentLocation = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== "granted") {
@@ -78,10 +79,13 @@ const ContinueRegisterScreen = ({
         longitude,
       });
 
-      for (let item of response) {
-        let address = `${item.name}, ${item.street}, ${item.postalCode}, ${item.city}`;
-        ref.current?.setAddressText(address);
-      }
+      let address = `${response[0].name}, ${response[0].street}, ${response[0].postalCode}, ${response[0].city}`;
+      ref.current?.setAddressText(address);
+
+      setCenterAddress({
+        location: { latitude: latitude, longitude: longitude },
+        address: address,
+      });
     }
   };
 
@@ -117,6 +121,12 @@ const ContinueRegisterScreen = ({
             ref={ref}
             styles={styles.inputStyles}
             enablePoweredByContainer={false}
+            onPress={(data, details = null) => {
+              setCenterAddress({
+                location: details.geometry.location,
+                address: data.description,
+              });
+            }}
             fetchDetails={true}
             returnKeyType={"search"}
             placeholder="Centre Address"
@@ -146,6 +156,7 @@ const ContinueRegisterScreen = ({
             containerStyle={{
               width: "50%",
               backgroundColor: "rgba(106, 90, 205, 0.0)",
+              borderColor: "rgba(106, 90, 205, 0.0)",
               paddingLeft: 10,
               paddingRight: 5,
               marginLeft: 0,
@@ -242,6 +253,9 @@ const styles = StyleSheet.create({
     container: {
       flex: 0,
       marginTop: 10,
+    },
+    textInput: {
+      paddingRight: 60,
     },
   },
 });
