@@ -27,6 +27,7 @@ const ContinueRegisterScreen = ({
   const [liveLocation, setLiveLocation] = useState(false);
   const [radius, setRadius] = useState("");
 
+  navigator.geolocation = require("expo-location");
   const register = async () => {
     const profile = {
       firstName: firstName,
@@ -91,8 +92,8 @@ const ContinueRegisterScreen = ({
                 key: "AIzaSyCE2Ct-iHuI_2nNALaRghtfpNBj1gPhfcY",
                 language: "en",
               }}
-              // currentLocation={true}
-              // currentLocationLabel="Current location"
+              currentLocation={true}
+              currentLocationLabel="Current location"
             />
           </View>
           <CheckBox
