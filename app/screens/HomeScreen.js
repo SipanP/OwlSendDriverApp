@@ -1,11 +1,9 @@
 import { doc, getDoc, onSnapshot, setDoc } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
-import { useDispatch } from "react-redux";
 import GoButton from "../components/GoButton";
 import Map from "../components/Map";
 import { db } from "../core/Config";
-import { setDestination, setOrigin } from "../slices/navSlice";
 
 const HomeScreen = ({ navigation, userProfile }) => {
   // // Get Location permission
@@ -35,10 +33,10 @@ const HomeScreen = ({ navigation, userProfile }) => {
 
   const [online, setOnline] = useState(false);
 
-  const [userDoc, setUserDoc] = useState({
-    pickup: {},
-    dropoff: {},
-  });
+  const [userDoc, setUserDoc] = useState(null);
+
+  const [origin, setOrigin] = useState(null);
+  const [destination, setDestination] = useState(null);
 
   const Create = () => {
     const myDoc = doc(db, "DriverOrders", "MyDocument");
@@ -57,7 +55,7 @@ const HomeScreen = ({ navigation, userProfile }) => {
       });
   };
 
-  const myDoc = doc(db, "DriverOrders", "0987654321");
+  const myDoc = doc(db, "DriverOrders", userProfile.phone);
   const Read = () => {
     getDoc(myDoc)
       .then((snapshot) => {
@@ -76,39 +74,37 @@ const HomeScreen = ({ navigation, userProfile }) => {
 
   const Delete = () => {};
 
-  const dispatch = useDispatch();
-
   useEffect(() => {
     console.log(userProfile);
 
     // Read();
     return onSnapshot(myDoc, (doc) => {
       setUserDoc(doc.data());
-      console.log(doc.data(), userDoc);
-      dispatch(
-        setOrigin({
-          location: {
-            lat: userDoc.pickup.location.Latitude,
-            lng: userDoc.pickup.location.Longitude,
-          },
-          description: userDoc.pickup.address,
-        })
-      );
-      dispatch(
-        setDestination({
-          location: {
-            lat: userDoc.dropoff.location.Latitude,
-            lng: userDoc.dropoff.location.Longitude,
-          },
-          description: userDoc.dropoff.address,
-        })
-      );
     });
   }, []);
 
+  useEffect(() => {
+    if (userDoc) {
+      setOrigin({
+        location: {
+          lat: userDoc.pickup.location.latitude,
+          lng: userDoc.pickup.location.longitude,
+        },
+        description: userDoc.pickup.postcode,
+      });
+      setDestination({
+        location: {
+          lat: userDoc.dropoff.location.latitude,
+          lng: userDoc.dropoff.location.longitude,
+        },
+        description: userDoc.dropoff.postcode,
+      });
+    }
+  }, [userDoc]);
+
   return (
     <View style={styles.container}>
-      <Map style={{ flex: 1 }} />
+      <Map style={{ flex: 1 }} origin={origin} destination={destination} />
       <View
         style={{
           position: "absolute",

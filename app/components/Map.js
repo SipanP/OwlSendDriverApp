@@ -2,14 +2,16 @@ import React, { useEffect, useRef } from "react";
 import { Image, StyleSheet } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import MapViewDirections from "react-native-maps-directions";
-import { useSelector } from "react-redux";
 import Colors from "../core/Colors";
-import { selectDestination, selectOrigin } from "../slices/navSlice";
 
-const Map = () => {
-  const origin = useSelector(selectOrigin);
-  const destination = useSelector(selectDestination);
+const Map = ({ origin, destination }) => {
   const mapRef = useRef(null);
+  const initialMapCenter = {
+    location: {
+      lat: 51.498733, // This is the Geoloaction of Huxley!
+      lng: -0.179461, // Change to user's current location later on.
+    },
+  };
 
   useEffect(() => {
     if (!origin || !destination) return;
@@ -27,10 +29,10 @@ const Map = () => {
       style={{ flex: 1 }}
       mapType="mutedStandard"
       region={{
-        latitude: origin.location.lat,
-        longitude: origin.location.lng,
-        latitudeDelta: 0.04,
-        longitudeDelta: 0.04,
+        latitude: initialMapCenter.location.lat,
+        longitude: initialMapCenter.location.lng,
+        latitudeDelta: 0.06,
+        longitudeDelta: 0.06,
       }}
     >
       {origin?.location && (

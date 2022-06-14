@@ -1,15 +1,13 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { StatusBar } from "expo-status-bar";
 import React, { useEffect, useState } from "react";
 import { StyleSheet } from "react-native";
-import { Provider } from "react-redux";
 import Colors from "./app/core/Colors";
 import ContinueRegisterScreen from "./app/screens/ContinueRegisterScreen";
 import HomeScreen from "./app/screens/HomeScreen";
 import StartRegisterScreen from "./app/screens/StartRegisterScreen";
-import { store } from "./store";
-import { StatusBar } from "expo-status-bar";
 
 const globalScreenOptions = {
   headerStyle: { backgroundColor: Colors.primary },
@@ -24,7 +22,7 @@ export default function App() {
 
   const getUserProfile = async () => {
     // Get user profile from device storage.
-    AsyncStorage.clear(); // Uncomment to clear user profile
+    // AsyncStorage.clear(); // Uncomment to clear user profile
     try {
       const user = JSON.parse(await AsyncStorage.getItem("profile"));
       if (user) {
@@ -73,33 +71,31 @@ export default function App() {
   }, []);
 
   return (
-    <Provider store={store}>
-      <NavigationContainer>
-        <StatusBar style="dark" />
-        <Stack.Navigator screenOptions={globalScreenOptions}>
-          {userProfile && !editProfile ? (
+    <NavigationContainer>
+      <StatusBar style="dark" />
+      <Stack.Navigator screenOptions={globalScreenOptions}>
+        {userProfile && !editProfile ? (
+          <Stack.Screen
+            name="Home"
+            component={Home}
+            options={{ headerShown: false }}
+          />
+        ) : (
+          <>
             <Stack.Screen
-              name="Home"
-              component={Home}
+              name="StartRegister"
+              component={StartRegister}
               options={{ headerShown: false }}
             />
-          ) : (
-            <>
-              <Stack.Screen
-                name="StartRegister"
-                component={StartRegister}
-                options={{ headerShown: false }}
-              />
-              <Stack.Screen
-                name="ContinueRegister"
-                component={ContinueRegister}
-                options={{ headerTitle: "Enter driver details" }}
-              />
-            </>
-          )}
-        </Stack.Navigator>
-      </NavigationContainer>
-    </Provider>
+            <Stack.Screen
+              name="ContinueRegister"
+              component={ContinueRegister}
+              options={{ headerTitle: "Enter driver details" }}
+            />
+          </>
+        )}
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
 

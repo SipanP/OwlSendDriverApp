@@ -47,7 +47,6 @@ const ContinueRegisterScreen = ({
     } catch (e) {
       console.log(e);
     }
-    console.log("Success!");
     setUserProfile(profile);
     setEditProfile(false);
   };
@@ -82,14 +81,6 @@ const ContinueRegisterScreen = ({
           <View style={{ width: "45%" }}>
             <GooglePlacesAutocomplete
               styles={styles.inputStyles}
-              // onPress={(data, details = null) => {
-              //   setOrigin({
-              //     location: details.geometry.location,
-              //     shortAddress: details.name,
-              //     address: details.formatted_address,
-              //     postcode: details.address_components.slice(-1)[0].long_name,
-              //   });
-              // }}
               enablePoweredByContainer={false}
               fetchDetails={true}
               returnKeyType={"search"}
