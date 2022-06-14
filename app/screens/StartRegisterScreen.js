@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Image,
   KeyboardAvoidingView,
@@ -13,6 +13,12 @@ const StartRegisterScreen = ({ navigation, userProfile }) => {
   const [tel, setTel] = useState(userProfile?.phone);
   const [firstName, setFirstName] = useState(userProfile?.firstName);
   const [lastName, setLastName] = useState(userProfile?.lastName);
+
+  useEffect(() => {
+    if (userProfile) {
+      navigation.navigate("Home");
+    }
+  }, []);
 
   return (
     <KeyboardAvoidingView

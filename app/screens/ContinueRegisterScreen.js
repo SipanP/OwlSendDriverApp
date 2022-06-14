@@ -21,12 +21,7 @@ import FontAwesome from "react-native-vector-icons/FontAwesome";
 import Colors from "../core/Colors";
 import { db } from "../core/Config";
 
-const ContinueRegisterScreen = ({
-  route,
-  userProfile,
-  setUserProfile,
-  setEditProfile,
-}) => {
+const ContinueRegisterScreen = ({ route, userProfile, setUserProfile }) => {
   const { firstName, lastName, tel } = route.params;
   const [length, setLength] = useState(
     userProfile?.length ? userProfile.length.toString() : ""
@@ -84,7 +79,6 @@ const ContinueRegisterScreen = ({
     registerDriver();
 
     setUserProfile(profile);
-    setEditProfile(false);
   };
 
   const registerDriver = async () => {

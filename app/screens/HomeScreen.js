@@ -5,7 +5,7 @@ import GoButton from "../components/GoButton";
 import Map from "../components/Map";
 import { db } from "../core/Config";
 
-const HomeScreen = ({ navigation, userProfile, setEditProfile }) => {
+const HomeScreen = ({ navigation, userProfile }) => {
   // // Get Location permission
   // const [location, setLocation] = useState(null);
   // const [errorMsg, setErrorMsg] = useState(null);
@@ -91,7 +91,7 @@ const HomeScreen = ({ navigation, userProfile, setEditProfile }) => {
       >
         <View style={{ bottom: 0 }}>
           <GoButton onPress={goOnline} />
-          {/* <GoButton onPress={() => setEditProfile(true)} /> */}
+          {/* <GoButton onPress={() => navigation.navigate("StartRegister")} /> */}
         </View>
       </View>
       {/* <NewOrder userDoc={userDoc} /> */}
