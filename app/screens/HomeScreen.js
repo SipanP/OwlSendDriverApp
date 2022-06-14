@@ -31,10 +31,9 @@ const HomeScreen = ({ navigation, userProfile }) => {
   //   console.log(text);
   // }
 
+  const myDoc = doc(db, "DriverOrders", userProfile.phone);
   const [online, setOnline] = useState(false);
-
   const [userDoc, setUserDoc] = useState(null);
-
   const [origin, setOrigin] = useState(null);
   const [destination, setDestination] = useState(null);
 
@@ -55,7 +54,6 @@ const HomeScreen = ({ navigation, userProfile }) => {
       });
   };
 
-  const myDoc = doc(db, "DriverOrders", userProfile.phone);
   const Read = () => {
     getDoc(myDoc)
       .then((snapshot) => {

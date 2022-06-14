@@ -1,17 +1,32 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Image, StyleSheet } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import MapViewDirections from "react-native-maps-directions";
 import Colors from "../core/Colors";
+import * as Location from "expo-location";
 
 const Map = ({ origin, destination }) => {
+  const [currentLocation, setCurrentLocation] = useState({
+    latitude: 51.498733, // This is the Geoloaction of Huxley!
+    longitude: -0.179461, // Change to user's current location later on.
+  });
+  const [errorMsg, setErrorMsg] = useState(null);
   const mapRef = useRef(null);
-  const initialMapCenter = {
-    location: {
-      lat: 51.498733, // This is the Geoloaction of Huxley!
-      lng: -0.179461, // Change to user's current location later on.
-    },
+
+  const getCurrentLocation = async () => {
+    let { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== "granted") {
+      setErrorMsg("Permission to access location was denied");
+      return;
+    }
+
+    let location = await Location.getCurrentPositionAsync({});
+    setCurrentLocation(location.coords);
   };
+
+  useEffect(() => {
+    getCurrentLocation();
+  }, []);
 
   useEffect(() => {
     if (!origin || !destination) return;
@@ -29,8 +44,8 @@ const Map = ({ origin, destination }) => {
       style={{ flex: 1 }}
       mapType="mutedStandard"
       region={{
-        latitude: initialMapCenter.location.lat,
-        longitude: initialMapCenter.location.lng,
+        latitude: currentLocation.latitude,
+        longitude: currentLocation.longitude,
         latitudeDelta: 0.06,
         longitudeDelta: 0.06,
       }}
