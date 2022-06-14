@@ -1,7 +1,12 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { StatusBar } from "expo-status-bar";
-import React, { useState } from "react";
-import { KeyboardAvoidingView, StyleSheet, View } from "react-native";
+import React, { useState, useRef, useEffect } from "react";
+import {
+  KeyboardAvoidingView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import {
   Button,
   ButtonGroup,
@@ -11,6 +16,8 @@ import {
 } from "react-native-elements";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import Colors from "../core/Colors";
+import FontAwesome from "react-native-vector-icons/FontAwesome";
+import * as Location from "expo-location";
 
 const ContinueRegisterScreen = ({
   route,
@@ -27,7 +34,6 @@ const ContinueRegisterScreen = ({
   const [liveLocation, setLiveLocation] = useState(false);
   const [radius, setRadius] = useState("");
 
-  navigator.geolocation = require("expo-location");
   const register = async () => {
     const profile = {
       firstName: firstName,
@@ -50,6 +56,33 @@ const ContinueRegisterScreen = ({
     }
     setUserProfile(profile);
     setEditProfile(false);
+  };
+
+  const ref = useRef();
+
+  const [currentLocation, setCurrentLocation] = useState("");
+  const getCurrentLocation = async () => {
+    let { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== "granted") {
+      setErrorMsg("Permission to access location was denied");
+      return;
+    }
+
+    let location = await Location.getCurrentPositionAsync({
+      accuracy: Location.Accuracy.Balanced,
+    });
+    if (location) {
+      const { latitude, longitude } = location.coords;
+      let response = await Location.reverseGeocodeAsync({
+        latitude,
+        longitude,
+      });
+
+      for (let item of response) {
+        let address = `${item.name}, ${item.street}, ${item.postalCode}, ${item.city}`;
+        ref.current?.setAddressText(address);
+      }
+    }
   };
 
   return (
@@ -78,27 +111,40 @@ const ContinueRegisterScreen = ({
         <Text style={{ color: "grey", marginLeft: 10 }}>
           In what area are you willing to deliver?
         </Text>
-        <View style={{ flexDirection: "row" }}>
-          <View style={{ width: "45%" }}>
-            <GooglePlacesAutocomplete
-              styles={styles.inputStyles}
-              enablePoweredByContainer={false}
-              fetchDetails={true}
-              returnKeyType={"search"}
-              placeholder="Centre Address"
-              nearbyPlacesAPI="GooglePlacesSearch"
-              debounce={400}
-              query={{
-                key: "AIzaSyCE2Ct-iHuI_2nNALaRghtfpNBj1gPhfcY",
-                language: "en",
+
+        <View style={{ width: "100%" }}>
+          <GooglePlacesAutocomplete
+            ref={ref}
+            styles={styles.inputStyles}
+            enablePoweredByContainer={false}
+            fetchDetails={true}
+            returnKeyType={"search"}
+            placeholder="Centre Address"
+            nearbyPlacesAPI="GooglePlacesSearch"
+            debounce={400}
+            query={{
+              key: "AIzaSyCE2Ct-iHuI_2nNALaRghtfpNBj1gPhfcY",
+              language: "en",
+            }}
+          />
+          <View style={{ position: "absolute", right: 30, top: 15 }}>
+            <TouchableOpacity
+              onPress={() => {
+                getCurrentLocation();
               }}
-              currentLocation={true}
-              currentLocationLabel="Current location"
-            />
+            >
+              <FontAwesome
+                name="location-arrow"
+                size={35}
+                color={Colors.primary}
+              />
+            </TouchableOpacity>
           </View>
+        </View>
+        <View style={{ flexDirection: "row" }}>
           <CheckBox
             containerStyle={{
-              width: "30%",
+              width: "50%",
               backgroundColor: "rgba(106, 90, 205, 0.0)",
               paddingLeft: 10,
               paddingRight: 5,
@@ -107,7 +153,7 @@ const ContinueRegisterScreen = ({
             }}
             textStyle={{ fontWeight: "500" }}
             checkedColor={Colors.primary}
-            title="Live Location"
+            title="Use Live Location"
             checked={liveLocation}
             onPress={() => {
               setLiveLocation(!liveLocation);
@@ -115,7 +161,7 @@ const ContinueRegisterScreen = ({
           />
           <Input
             containerStyle={{
-              width: "25%",
+              width: "50%",
               marginTop: 5,
             }}
             placeholder="Radius (mi)"
@@ -196,7 +242,6 @@ const styles = StyleSheet.create({
     container: {
       flex: 0,
       marginTop: 10,
-      marginBottom: 20,
     },
   },
 });
