@@ -85,8 +85,14 @@ const Map = ({ origin, destination }) => {
       )}
       {origin && destination && (
         <MapViewDirections
-          origin={origin.description}
-          destination={destination.description}
+          origin={{
+            latitude: origin.location.lat,
+            longitude: origin.location.lng,
+          }}
+          destination={{
+            latitude: destination.location.lat,
+            longitude: destination.location.lng,
+          }}
           apikey="AIzaSyCE2Ct-iHuI_2nNALaRghtfpNBj1gPhfcY"
           strokeWidth={3}
           strokeColor={Colors.primary}
