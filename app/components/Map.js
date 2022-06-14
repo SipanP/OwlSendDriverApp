@@ -47,8 +47,8 @@ const Map = ({ origin, destination }) => {
       region={{
         latitude: currentLocation.latitude,
         longitude: currentLocation.longitude,
-        latitudeDelta: 0.06,
-        longitudeDelta: 0.06,
+        latitudeDelta: 0.05,
+        longitudeDelta: 0.05,
       }}
     >
       {origin?.location && (
@@ -88,7 +88,7 @@ const Map = ({ origin, destination }) => {
           origin={origin.description}
           destination={destination.description}
           apikey="AIzaSyCE2Ct-iHuI_2nNALaRghtfpNBj1gPhfcY"
-          strokeWidth={2}
+          strokeWidth={3}
           strokeColor={Colors.primary}
         />
       )}

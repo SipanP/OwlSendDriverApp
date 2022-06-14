@@ -28,13 +28,25 @@ const ContinueRegisterScreen = ({
   setEditProfile,
 }) => {
   const { firstName, lastName, tel } = route.params;
-  const [length, setLength] = useState(userProfile?.length.toString());
-  const [width, setWidth] = useState(userProfile?.width.toString());
-  const [height, setHeight] = useState(userProfile?.height.toString());
-  const [weight, setWeight] = useState(userProfile?.weight.toString());
+  const [length, setLength] = useState(
+    userProfile?.length ? userProfile.length.toString() : ""
+  );
+  const [width, setWidth] = useState(
+    userProfile?.width ? userProfile.width.toString() : ""
+  );
+  const [height, setHeight] = useState(
+    userProfile?.height ? userProfile.height.toString() : ""
+  );
+  const [weight, setWeight] = useState(
+    userProfile?.weight ? userProfile.weight.toString() : ""
+  );
   const [selectedVehicle, setSelectedVehicle] = useState(userProfile?.vehicle);
-  const [liveLocation, setLiveLocation] = useState(userProfile?.liveLocation);
-  const [radius, setRadius] = useState(userProfile?.radius.toString());
+  const [liveLocation, setLiveLocation] = useState(
+    userProfile ? userProfile.liveLocation : false
+  );
+  const [radius, setRadius] = useState(
+    userProfile?.radius ? userProfile.radius.toString() : ""
+  );
   const [centerAddress, setCenterAddress] = useState(
     userProfile?.centerAddress
   );
@@ -161,7 +173,10 @@ const ContinueRegisterScreen = ({
             enablePoweredByContainer={false}
             onPress={(data, details = null) => {
               setCenterAddress({
-                location: details.geometry.location,
+                location: {
+                  latitude: details.geometry.location.lat,
+                  longitude: details.geometry.location.lng,
+                },
                 address: data.description,
               });
             }}
