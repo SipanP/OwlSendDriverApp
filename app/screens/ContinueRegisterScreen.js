@@ -1,6 +1,8 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as Location from "expo-location";
 import { StatusBar } from "expo-status-bar";
-import React, { useState, useRef, useEffect } from "react";
+import { doc, GeoPoint, setDoc } from "firebase/firestore";
+import React, { useEffect, useRef, useState } from "react";
 import {
   KeyboardAvoidingView,
   StyleSheet,
@@ -15,9 +17,9 @@ import {
   Text,
 } from "react-native-elements";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
-import Colors from "../core/Colors";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
-import * as Location from "expo-location";
+import Colors from "../core/Colors";
+import { db } from "../core/Config";
 
 const ContinueRegisterScreen = ({
   route,
@@ -26,27 +28,36 @@ const ContinueRegisterScreen = ({
   setEditProfile,
 }) => {
   const { firstName, lastName, tel } = route.params;
-  const [length, setLength] = useState("");
-  const [width, setWidth] = useState("");
-  const [height, setHeight] = useState("");
-  const [weight, setWeight] = useState("");
-  const [selectedVehicle, setSelectedVehicle] = useState(0);
-  const [liveLocation, setLiveLocation] = useState(false);
-  const [radius, setRadius] = useState("");
-  const [centerAddress, setCenterAddress] = useState({});
+  const [length, setLength] = useState(userProfile?.length.toString());
+  const [width, setWidth] = useState(userProfile?.width.toString());
+  const [height, setHeight] = useState(userProfile?.height.toString());
+  const [weight, setWeight] = useState(userProfile?.weight.toString());
+  const [selectedVehicle, setSelectedVehicle] = useState(userProfile?.vehicle);
+  const [liveLocation, setLiveLocation] = useState(userProfile?.liveLocation);
+  const [radius, setRadius] = useState(userProfile?.radius.toString());
+  const [centerAddress, setCenterAddress] = useState(
+    userProfile?.centerAddress
+  );
+  const ref = useRef();
+
+  useEffect(() => {
+    if (userProfile) {
+      ref.current?.setAddressText(userProfile.centerAddress.address);
+    }
+  }, []);
 
   const register = async () => {
     const profile = {
       firstName: firstName,
       lastName: lastName,
       phone: tel,
-      length: length,
-      width: width,
-      height: height,
-      weight: weight,
-      selectedVehicle: selectedVehicle,
+      length: parseInt(length),
+      width: parseInt(width),
+      height: parseInt(height),
+      weight: parseFloat(weight),
+      vehicle: selectedVehicle,
       liveLocation: liveLocation,
-      radius: radius,
+      radius: parseFloat(radius),
       centerAddress: centerAddress,
     };
 
@@ -56,11 +67,38 @@ const ContinueRegisterScreen = ({
     } catch (e) {
       console.log(e);
     }
+
+    // Register driver on Firebase
+    registerDriver();
+
     setUserProfile(profile);
     setEditProfile(false);
   };
 
-  const ref = useRef();
+  const registerDriver = async () => {
+    const myDoc = doc(db, "RegisteredDrivers", tel);
+
+    const docData = {
+      name: firstName + " " + lastName,
+      dimensions: {
+        length: parseInt(length),
+        width: parseInt(width),
+        height: parseInt(height),
+        weight: parseFloat(weight),
+      },
+      centerAddress: new GeoPoint(
+        centerAddress.location.latitude,
+        centerAddress.location.longitude
+      ),
+      radius: parseFloat(radius),
+      useLiveLocation: liveLocation,
+      vehicle: selectedVehicle,
+      online: false,
+      // currentLocation:
+    };
+
+    await setDoc(myDoc, docData);
+  };
 
   const getCurrentLocation = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync();

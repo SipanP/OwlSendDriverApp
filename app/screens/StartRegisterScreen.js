@@ -10,9 +10,9 @@ import { Button, Input, Text } from "react-native-elements";
 import Colors from "../core/Colors";
 
 const StartRegisterScreen = ({ navigation, userProfile }) => {
-  const [tel, setTel] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+  const [tel, setTel] = useState(userProfile?.phone);
+  const [firstName, setFirstName] = useState(userProfile?.firstName);
+  const [lastName, setLastName] = useState(userProfile?.lastName);
 
   return (
     <KeyboardAvoidingView

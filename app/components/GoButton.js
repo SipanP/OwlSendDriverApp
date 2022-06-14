@@ -3,9 +3,9 @@ import React from "react";
 import Colors from "../core/Colors";
 import IonIcon from "react-native-vector-icons/Ionicons";
 
-const GoButton = () => {
+const GoButton = ({ onPress }) => {
   return (
-    <TouchableOpacity>
+    <TouchableOpacity onPress={onPress}>
       <View style={styles.container}>
         <Text style={styles.goText}>GO</Text>
         <IonIcon

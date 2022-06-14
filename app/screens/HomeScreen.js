@@ -1,11 +1,11 @@
-import { doc, getDoc, onSnapshot, setDoc } from "firebase/firestore";
+import { doc, onSnapshot, updateDoc } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import GoButton from "../components/GoButton";
 import Map from "../components/Map";
 import { db } from "../core/Config";
 
-const HomeScreen = ({ navigation, userProfile }) => {
+const HomeScreen = ({ navigation, userProfile, setEditProfile }) => {
   // // Get Location permission
   // const [location, setLocation] = useState(null);
   // const [errorMsg, setErrorMsg] = useState(null);
@@ -31,52 +31,25 @@ const HomeScreen = ({ navigation, userProfile }) => {
   //   console.log(text);
   // }
 
-  const myDoc = doc(db, "DriverOrders", userProfile.phone);
+  const driverOrders = doc(db, "DriverOrders", userProfile.phone);
+  const registeredDrivers = doc(db, "RegisteredDrivers", userProfile.phone);
   const [online, setOnline] = useState(false);
   const [userDoc, setUserDoc] = useState(null);
   const [origin, setOrigin] = useState(null);
   const [destination, setDestination] = useState(null);
 
-  const Create = () => {
-    const myDoc = doc(db, "DriverOrders", "MyDocument");
-
-    const docData = {
-      name: "John",
-      bio: "Coder",
-    };
-
-    setDoc(myDoc, docData)
-      .then(() => {
-        alert("Document created");
-      })
-      .catch((error) => {
-        alert(error.message);
-      });
+  const goOnline = async () => {
+    setOnline(true);
+    await updateDoc(registeredDrivers, {
+      online: true,
+    });
   };
-
-  const Read = () => {
-    getDoc(myDoc)
-      .then((snapshot) => {
-        if (snapshot.exists) {
-          setUserDoc(snapshot.data());
-        } else {
-          alert("No doc found");
-        }
-      })
-      .catch((error) => {
-        alert(error.message);
-      });
-  };
-
-  const Update = () => {};
-
-  const Delete = () => {};
 
   useEffect(() => {
-    console.log(userProfile);
+    // console.log(userProfile);
 
     // Read();
-    return onSnapshot(myDoc, (doc) => {
+    return onSnapshot(driverOrders, (doc) => {
       setUserDoc(doc.data());
     });
   }, []);
@@ -97,6 +70,10 @@ const HomeScreen = ({ navigation, userProfile }) => {
         },
         description: userDoc.dropoff.postcode,
       });
+
+      if (online && userDoc && userDoc.status === "pending") {
+        console.log("New Order Request");
+      }
     }
   }, [userDoc]);
 
@@ -113,7 +90,8 @@ const HomeScreen = ({ navigation, userProfile }) => {
         }}
       >
         <View style={{ bottom: 0 }}>
-          <GoButton />
+          <GoButton onPress={goOnline} />
+          {/* <GoButton onPress={() => setEditProfile(true)} /> */}
         </View>
       </View>
       {/* <NewOrder userDoc={userDoc} /> */}
