@@ -41,6 +41,12 @@ const HomeScreen = ({ navigation, userProfile }) => {
   }, []);
 
   useEffect(() => {
+    return onSnapshot(registeredDrivers, (doc) => {
+      setOnline(doc.data().online);
+    });
+  }, []);
+
+  useEffect(() => {
     if (userDoc && online && userDoc.status === "pending") {
       setOrigin({
         location: {
@@ -63,9 +69,11 @@ const HomeScreen = ({ navigation, userProfile }) => {
 
   const [showModal, setShowModal] = useState(false);
 
-  const hideModal = () => {
+  const hideModal = async () => {
     setShowModal(false);
-    // Change userDoc status to declined.
+    await updateDoc(driverOrders, {
+      status: "declined",
+    });
   };
   return (
     <View style={styles.container}>
