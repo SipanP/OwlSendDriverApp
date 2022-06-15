@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
   container: {
     alignItems: "center",
     width: "100%",
-    height: "35%",
+    height: "100%",
     position: "absolute",
     bottom: 0,
     backgroundColor: Colors.primarySeeThrough,

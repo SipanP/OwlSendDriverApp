@@ -1,6 +1,6 @@
 import { doc, onSnapshot, updateDoc } from "firebase/firestore";
-import React, { useEffect, useState } from "react";
-import { StyleSheet, TouchableOpacity, View, Modal } from "react-native";
+import React, { useEffect, useState, useRef } from "react";
+import { StyleSheet, TouchableOpacity, View, Animated } from "react-native";
 import GoButton from "../components/GoButton";
 import Map from "../components/Map";
 import StopButton from "../components/StopButton";
@@ -58,14 +58,32 @@ const HomeScreen = ({ navigation, userProfile }) => {
       });
 
       setShowModal(true);
+
+      Animated.spring(slideAnim, {
+        toValue: 0,
+        velocity: 3,
+        tension: 2,
+        friction: 8,
+        useNativeDriver: false,
+      }).start();
     }
   }, [userDoc, online]);
 
   const [showModal, setShowModal] = useState(false);
 
+  // slideAnim will be used as the value for position. Initial Value: 100
+  const slideAnim = useRef(new Animated.Value(600)).current;
+
   const hideModal = () => {
     setShowModal(false);
     // Change userDoc status to declined.
+    Animated.spring(slideAnim, {
+      toValue: 600,
+      velocity: 3,
+      tension: 2,
+      friction: 8,
+      useNativeDriver: false,
+    }).start();
   };
   return (
     <View style={styles.container}>
@@ -89,16 +107,21 @@ const HomeScreen = ({ navigation, userProfile }) => {
           {online && !showModal && <StopButton onPress={goOffline} />}
         </View>
       </View>
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={showModal}
-        onRequestClose={() => {
-          setShowModal(false);
+      <Animated.View
+        style={{
+          bottom: 0,
+          width: "100%",
+          height: "35%",
+          transform: [{ translateY: slideAnim }],
+          position: "absolute",
         }}
       >
-        <NewOrder userDoc={userDoc} hideModal={hideModal} />
-      </Modal>
+        <NewOrder
+          userDoc={userDoc}
+          hideModal={hideModal}
+          style={styles.modal}
+        />
+      </Animated.View>
     </View>
   );
 };
@@ -115,5 +138,9 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: "8%",
     right: "7%",
+  },
+  modal: {
+    position: "absolute",
+    zIndex: 9999,
   },
 });
