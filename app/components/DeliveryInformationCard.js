@@ -1,6 +1,9 @@
 import React from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { Text } from "react-native-elements";
+import call from "react-native-phone-call";
+import IonIcon from "react-native-vector-icons/Ionicons";
+import Colors from "../core/Colors";
 
 const DeliveryInformationCard = ({
   name,
@@ -8,7 +11,13 @@ const DeliveryInformationCard = ({
   type,
   isOnRoute,
   fullInfo,
+  phone,
 }) => {
+  const phoneArgs = {
+    number: phone, // String value with the number to call
+    prompt: true, // Optional boolean property. Determines if the user should be prompted prior to the call
+    skipCanOpen: true, // Skip the canOpenURL check
+  };
   return (
     <View
       style={[
@@ -31,6 +40,19 @@ const DeliveryInformationCard = ({
         >
           {type}
         </Text>
+        {fullInfo && (
+          <TouchableOpacity
+            style={styles.call}
+            onPress={() => {
+              call(phoneArgs).catch(console.error);
+            }}
+          >
+            <Text style={{ color: "white", fontSize: 20, fontWeight: "700" }}>
+              CALL
+            </Text>
+            <IonIcon name="call" size={20} color="white" />
+          </TouchableOpacity>
+        )}
       </View>
       <View style={styles.rightCol}>
         <Text
@@ -102,5 +124,14 @@ const styles = StyleSheet.create({
   rightCol: {
     paddingRight: 30,
     flex: 2,
+  },
+  call: {
+    backgroundColor: Colors.primary,
+    flexDirection: "row",
+    width: "70%",
+    justifyContent: "center",
+    borderRadius: 10,
+    alignSelf: "center",
+    marginTop: "5%",
   },
 });

@@ -20,6 +20,7 @@ const NewOrder = ({ userDoc, hideModal, acceptOrder, pickup, pickedUp }) => {
         address={userDoc?.pickup.address}
         isOnRoute={userDoc?.status === "pickup"}
         fullInfo={pickup}
+        phone={userDoc?.pickup.phone}
       />
       <DeliveryInformationCard
         name={userDoc?.dropoff.name}
@@ -27,6 +28,7 @@ const NewOrder = ({ userDoc, hideModal, acceptOrder, pickup, pickedUp }) => {
         address={userDoc?.dropoff.address}
         isOnRoute={userDoc?.status === "dropoff"}
         fullInfo={pickup}
+        phone={userDoc?.dropoff.phone}
       />
       {!pickup && (
         <View

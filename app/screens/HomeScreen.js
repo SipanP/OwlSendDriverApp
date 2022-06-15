@@ -16,6 +16,8 @@ const HomeScreen = ({ navigation, userProfile }) => {
   const [userDoc, setUserDoc] = useState(null);
   const [origin, setOrigin] = useState(null);
   const [destination, setDestination] = useState(null);
+  const [pickup, setPickup] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
   const goOnline = async () => {
     setOnline(true);
@@ -80,15 +82,11 @@ const HomeScreen = ({ navigation, userProfile }) => {
         useNativeDriver: false,
       }).start();
 
-      if (userDoc.status === "pickup") {
+      if (userDoc.status === "pickup" || userDoc.status === "dropoff") {
         setPickup(true);
       }
     }
   }, [userDoc, online]);
-
-  const [pickup, setPickup] = useState(false);
-
-  const [showModal, setShowModal] = useState(false);
 
   // slideAnim will be used as the value for position. Initial Value: 100
   const slideAnim = useRef(new Animated.Value(600)).current;
