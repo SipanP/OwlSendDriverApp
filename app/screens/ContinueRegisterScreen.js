@@ -123,7 +123,7 @@ const ContinueRegisterScreen = ({ route, userProfile, setUserProfile }) => {
         longitude,
       });
 
-      let address = `${response[0].name}, ${response[0].street}, ${response[0].postalCode}, ${response[0].city}`;
+      let address = `${response[0].name}, ${response[0].street}, ${response[0].city}, ${response[0].postalCode}`;
       ref.current?.setAddressText(address);
 
       setCenterAddress({
