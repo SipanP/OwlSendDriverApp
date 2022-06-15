@@ -1,14 +1,15 @@
-import { StyleSheet, Text, View, Button } from "react-native";
+import { StyleSheet, Text, View, ActivityIndicator } from "react-native";
 import React, { useState } from "react";
 import DeliveryInformationCard from "./DeliveryInformationCard";
 import Colors from "../core/Colors";
 import { TouchableOpacity } from "react-native";
 
-const NewOrder = ({ userDoc, hideModal }) => {
+const NewOrder = ({ userDoc, hideModal, acceptOrder }) => {
   var formatter = new Intl.NumberFormat("en-UK", {
     style: "currency",
     currency: "GBP",
   });
+  const [accepted, setAccepted] = useState(false);
 
   return (
     <View style={styles.container}>
@@ -17,12 +18,14 @@ const NewOrder = ({ userDoc, hideModal }) => {
         type={userDoc?.pickup.type}
         address={userDoc?.pickup.address}
         isOnRoute={userDoc?.status === "pickup"}
+        fullInfo={false}
       />
       <DeliveryInformationCard
         name={userDoc?.dropoff.name}
         type={userDoc?.dropoff.type}
         address={userDoc?.dropoff.address}
         isOnRoute={userDoc?.status === "dropoff"}
+        fullInfo={false}
       />
       <View
         style={{
@@ -43,27 +46,60 @@ const NewOrder = ({ userDoc, hideModal }) => {
           {formatter.format(userDoc?.price)}
         </Text>
       </View>
-      <View
-        style={{
-          width: "100%",
-          flexDirection: "row",
-          justifyContent: "space-evenly",
-        }}
-      >
-        <TouchableOpacity
-          style={[styles.button, { backgroundColor: "#D2222D" }]}
-          onPress={() => {
-            hideModal();
+      {!accepted && (
+        <View
+          style={{
+            width: "100%",
+            flexDirection: "row",
+            justifyContent: "space-evenly",
           }}
         >
-          <Text style={{ color: "white", fontSize: 20 }}>DECLINE</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.button, { backgroundColor: "#238823" }]}
+          <TouchableOpacity
+            style={[styles.button, { backgroundColor: "#D2222D" }]}
+            onPress={() => {
+              hideModal();
+              setAccepted(false);
+            }}
+          >
+            <Text style={{ color: "white", fontSize: 20 }}>DECLINE</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.button, { backgroundColor: "#238823" }]}
+            onPress={() => {
+              acceptOrder();
+              setAccepted(true);
+            }}
+          >
+            <Text style={{ color: "white", fontSize: 20 }}>ACCEPT</Text>
+          </TouchableOpacity>
+        </View>
+      )}
+      {accepted && (
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-evenly",
+            width: "100%",
+            marginTop: 15,
+          }}
         >
-          <Text style={{ color: "white", fontSize: 20 }}>ACCEPT</Text>
-        </TouchableOpacity>
-      </View>
+          <ActivityIndicator size="large" color="white" />
+          <Text
+            style={{
+              color: "white",
+              fontSize: 30,
+              fontWeight: "600",
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: 1 },
+              shadowOpacity: 0.6,
+              shadowRadius: 2,
+              elevation: 3,
+            }}
+          >
+            Waiting for other drivers
+          </Text>
+        </View>
+      )}
     </View>
   );
 };

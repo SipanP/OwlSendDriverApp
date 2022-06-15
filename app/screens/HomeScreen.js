@@ -47,7 +47,11 @@ const HomeScreen = ({ navigation, userProfile }) => {
   }, []);
 
   useEffect(() => {
-    if (userDoc && online && userDoc.status === "pending") {
+    if (
+      userDoc &&
+      online &&
+      (userDoc.status === "pending" || userDoc.status === "accepted")
+    ) {
       setOrigin({
         location: {
           lat: userDoc.pickup.location.latitude,
@@ -79,7 +83,7 @@ const HomeScreen = ({ navigation, userProfile }) => {
 
   // slideAnim will be used as the value for position. Initial Value: 100
   const slideAnim = useRef(new Animated.Value(600)).current;
-
+  // This function is called when the driver declines the order
   const hideModal = async () => {
     setShowModal(false);
     // Change userDoc status to declined.
@@ -94,6 +98,15 @@ const HomeScreen = ({ navigation, userProfile }) => {
       useNativeDriver: false,
     }).start();
   };
+
+  // This function is called when the driver accepts the order
+  const acceptOrder = async () => {
+    console.log("Accepted");
+    await updateDoc(driverOrders, {
+      status: "accepted",
+    });
+  };
+
   return (
     <View style={styles.container}>
       <Map style={{ flex: 1 }} origin={origin} destination={destination} />
@@ -128,6 +141,7 @@ const HomeScreen = ({ navigation, userProfile }) => {
         <NewOrder
           userDoc={userDoc}
           hideModal={hideModal}
+          acceptOrder={acceptOrder}
           style={styles.modal}
         />
       </Animated.View>

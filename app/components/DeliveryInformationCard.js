@@ -2,7 +2,13 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 import { Text } from "react-native-elements";
 
-const DeliveryInformationCard = ({ name, address, type, isOnRoute }) => {
+const DeliveryInformationCard = ({
+  name,
+  address,
+  type,
+  isOnRoute,
+  fullInfo,
+}) => {
   return (
     <View
       style={[
@@ -32,16 +38,23 @@ const DeliveryInformationCard = ({ name, address, type, isOnRoute }) => {
             isOnRoute ? styles.onRoute : styles.notOnRoute,
           ]}
         >
-          <Text
-            h4
-            style={[
-              styles.allText,
-              isOnRoute ? styles.onRoute : styles.notOnRoute,
-            ]}
-          >
-            {name} {"\n"}
-          </Text>
-          {address}
+          {fullInfo && (
+            <Text
+              h4
+              style={[
+                styles.allText,
+                isOnRoute ? styles.onRoute : styles.notOnRoute,
+              ]}
+            >
+              {name} {"\n"}
+            </Text>
+          )}
+          {fullInfo && address}
+          {!fullInfo && (
+            <Text style={{ fontSize: 20 }}>
+              {address?.slice(address?.indexOf(",") + 2, address.length)}
+            </Text>
+          )}
         </Text>
       </View>
     </View>
