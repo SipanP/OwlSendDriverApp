@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     width: "90%",
     marginTop: 20,
-    height: "30%",
+    height: "20%",
     display: "flex",
     flexDirection: "row",
   },

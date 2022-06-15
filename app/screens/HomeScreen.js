@@ -1,36 +1,15 @@
 import { doc, onSnapshot, updateDoc } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View, Modal } from "react-native";
 import GoButton from "../components/GoButton";
 import Map from "../components/Map";
+import StopButton from "../components/StopButton";
 import { db } from "../core/Config";
+import FontAwesome from "react-native-vector-icons/FontAwesome";
+import Colors from "../core/Colors";
+import NewOrder from "../components/NewOrder";
 
 const HomeScreen = ({ navigation, userProfile }) => {
-  // // Get Location permission
-  // const [location, setLocation] = useState(null);
-  // const [errorMsg, setErrorMsg] = useState(null);
-
-  // useEffect(() => {
-  //   (async () => {
-  //     let { status } = await Location.requestForegroundPermissionsAsync();
-  //     if (status !== "granted") {
-  //       setErrorMsg("Permission to access location was denied");
-  //       return;
-  //     }
-
-  //     let location = await Location.getCurrentPositionAsync({});
-  //     setLocation(location);
-  //   })();
-  // }, []);
-
-  // let text = "Waiting..";
-  // if (errorMsg) {
-  //   text = errorMsg;
-  // } else if (location) {
-  //   text = JSON.stringify(location);
-  //   console.log(text);
-  // }
-
   const driverOrders = doc(db, "DriverOrders", userProfile.phone);
   const registeredDrivers = doc(db, "RegisteredDrivers", userProfile.phone);
   const [online, setOnline] = useState(false);
@@ -45,6 +24,13 @@ const HomeScreen = ({ navigation, userProfile }) => {
     });
   };
 
+  const goOffline = async () => {
+    setOnline(false);
+    await updateDoc(registeredDrivers, {
+      online: false,
+    });
+  };
+
   useEffect(() => {
     // console.log(userProfile);
 
@@ -55,7 +41,7 @@ const HomeScreen = ({ navigation, userProfile }) => {
   }, []);
 
   useEffect(() => {
-    if (userDoc) {
+    if (userDoc && online && userDoc.status === "pending") {
       setOrigin({
         location: {
           lat: userDoc.pickup.location.latitude,
@@ -71,15 +57,24 @@ const HomeScreen = ({ navigation, userProfile }) => {
         description: userDoc.dropoff.postcode,
       });
 
-      if (online && userDoc && userDoc.status === "pending") {
-        console.log("New Order Request");
-      }
+      setShowModal(true);
     }
-  }, [userDoc]);
+  }, [userDoc, online]);
 
+  const [showModal, setShowModal] = useState(false);
+
+  const hideModal = () => {
+    setShowModal(false);
+    // Change userDoc status to declined.
+  };
   return (
     <View style={styles.container}>
       <Map style={{ flex: 1 }} origin={origin} destination={destination} />
+      <View style={styles.settingsIcon}>
+        <TouchableOpacity onPress={() => navigation.navigate("StartRegister")}>
+          <FontAwesome name="cog" size={50} color={Colors.primary} />
+        </TouchableOpacity>
+      </View>
       <View
         style={{
           position: "absolute",
@@ -90,11 +85,20 @@ const HomeScreen = ({ navigation, userProfile }) => {
         }}
       >
         <View style={{ bottom: 0 }}>
-          <GoButton onPress={goOnline} />
-          {/* <GoButton onPress={() => navigation.navigate("StartRegister")} /> */}
+          {!online && !showModal && <GoButton onPress={goOnline} />}
+          {online && !showModal && <StopButton onPress={goOffline} />}
         </View>
       </View>
-      {/* <NewOrder userDoc={userDoc} /> */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={showModal}
+        onRequestClose={() => {
+          setShowModal(false);
+        }}
+      >
+        <NewOrder userDoc={userDoc} hideModal={hideModal} />
+      </Modal>
     </View>
   );
 };
@@ -106,5 +110,10 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
     justifyContent: "center",
+  },
+  settingsIcon: {
+    position: "absolute",
+    top: "8%",
+    right: "7%",
   },
 });
