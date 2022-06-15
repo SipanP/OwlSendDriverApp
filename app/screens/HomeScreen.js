@@ -50,7 +50,10 @@ const HomeScreen = ({ navigation, userProfile }) => {
     if (
       userDoc &&
       online &&
-      (userDoc.status === "pending" || userDoc.status === "accepted")
+      (userDoc.status === "pending" ||
+        userDoc.status === "accepted" ||
+        userDoc.status === "pickup" ||
+        userDoc.status === "dropoff")
     ) {
       setOrigin({
         location: {
@@ -76,8 +79,14 @@ const HomeScreen = ({ navigation, userProfile }) => {
         friction: 8,
         useNativeDriver: false,
       }).start();
+
+      if (userDoc.status === "pickup") {
+        setPickup(true);
+      }
     }
   }, [userDoc, online]);
+
+  const [pickup, setPickup] = useState(false);
 
   const [showModal, setShowModal] = useState(false);
 
@@ -97,13 +106,20 @@ const HomeScreen = ({ navigation, userProfile }) => {
       friction: 8,
       useNativeDriver: false,
     }).start();
+    setOrigin(null);
+    setDestination(null);
   };
 
   // This function is called when the driver accepts the order
   const acceptOrder = async () => {
-    console.log("Accepted");
     await updateDoc(driverOrders, {
       status: "accepted",
+    });
+  };
+
+  const pickedUp = async () => {
+    await updateDoc(driverOrders, {
+      status: "dropoff",
     });
   };
 
@@ -130,19 +146,24 @@ const HomeScreen = ({ navigation, userProfile }) => {
         </View>
       </View>
       <Animated.View
-        style={{
-          bottom: 0,
-          width: "100%",
-          height: "35%",
-          transform: [{ translateY: slideAnim }],
-          position: "absolute",
-        }}
+        style={[
+          {
+            bottom: 0,
+            width: "100%",
+            height: "35%",
+            transform: [{ translateY: slideAnim }],
+            position: "absolute",
+          },
+          pickup ? { height: "45%" } : {},
+        ]}
       >
         <NewOrder
           userDoc={userDoc}
           hideModal={hideModal}
           acceptOrder={acceptOrder}
           style={styles.modal}
+          pickup={pickup}
+          pickedUp={pickedUp}
         />
       </Animated.View>
     </View>

@@ -17,6 +17,7 @@ const DeliveryInformationCard = ({
           ? [styles.onRoute, { borderColor: "white", borderWidth: 1 }]
           : [styles.notOnRoute, { borderColor: "black", borderWidth: 1 }],
         styles.boxWithShadow,
+        fullInfo ? { height: "30%" } : {},
       ]}
     >
       <View style={styles.leftCol}>
