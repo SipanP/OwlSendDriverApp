@@ -20,7 +20,7 @@ export default function App() {
 
   const getUserProfile = async () => {
     // Get user profile from device storage.
-    // AsyncStorage.clear(); // Uncomment to clear user profile
+    AsyncStorage.clear(); // Uncomment to clear user profile
     try {
       const user = JSON.parse(await AsyncStorage.getItem("profile"));
       if (user) {
