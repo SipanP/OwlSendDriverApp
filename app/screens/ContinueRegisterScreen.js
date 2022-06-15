@@ -35,7 +35,9 @@ const ContinueRegisterScreen = ({ route, userProfile, setUserProfile }) => {
   const [weight, setWeight] = useState(
     userProfile?.weight ? userProfile.weight.toString() : ""
   );
-  const [selectedVehicle, setSelectedVehicle] = useState(userProfile?.vehicle);
+  const [selectedVehicle, setSelectedVehicle] = useState(
+    userProfile ? userProfile.vehicle : 0
+  );
   const [liveLocation, setLiveLocation] = useState(
     userProfile ? userProfile.liveLocation : false
   );
@@ -211,7 +213,7 @@ const ContinueRegisterScreen = ({ route, userProfile, setUserProfile }) => {
             }}
             textStyle={{ fontWeight: "500" }}
             checkedColor={Colors.primary}
-            title="Use Live Location"
+            title="Show Nearby Orders"
             checked={liveLocation}
             onPress={() => {
               setLiveLocation(!liveLocation);
@@ -300,6 +302,7 @@ const styles = StyleSheet.create({
     container: {
       flex: 0,
       marginTop: 10,
+      marginHorizontal: 10,
     },
     textInput: {
       paddingRight: 60,
