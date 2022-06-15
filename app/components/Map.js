@@ -44,7 +44,7 @@ const Map = ({ origin, destination }) => {
       ref={mapRef}
       style={{ flex: 1 }}
       mapType="mutedStandard"
-      initialRegion={{
+      region={{
         latitude: currentLocation.latitude,
         longitude: currentLocation.longitude,
         latitudeDelta: 0.05,
