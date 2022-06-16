@@ -66,7 +66,7 @@ const ContinueRegisterScreen = ({ route, userProfile, setUserProfile }) => {
 
   useEffect(() => {
     if (userProfile) {
-      ref.current?.setAddressText(userProfile.centerAddress.address);
+      ref.current?.setAddressText(userProfile.centerAddress?.address);
     }
   }, []);
 
@@ -110,8 +110,8 @@ const ContinueRegisterScreen = ({ route, userProfile, setUserProfile }) => {
         weight: parseFloat(weight),
       },
       centerAddress: new GeoPoint(
-        centerAddress.location.latitude,
-        centerAddress.location.longitude
+        centerAddress ? centerAddress.location.latitude : null,
+        centerAddress ? centerAddress.location.longitude : null
       ),
       radius: parseFloat(radius),
       useLiveLocation: liveLocation,
