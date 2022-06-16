@@ -6,7 +6,7 @@ import {
   View,
   Animated,
   Text,
-  Button,
+  BackHandler,
 } from "react-native";
 import GoButton from "../components/GoButton";
 import Map from "../components/Map";
@@ -28,6 +28,18 @@ const HomeScreen = ({ navigation, userProfile }) => {
   const [pickup, setPickup] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [moneyModalVisible, setMoneyModalVisible] = useState(false);
+
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+
+      () => {
+        return true;
+      }
+    );
+
+    return () => backHandler.remove();
+  }, []);
 
   var formatter = new Intl.NumberFormat("en-UK", {
     style: "currency",

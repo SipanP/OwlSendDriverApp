@@ -17,6 +17,7 @@ import {
   CheckBox,
   Input,
   Text,
+  BackHandler,
 } from "react-native-elements";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
@@ -50,6 +51,18 @@ const ContinueRegisterScreen = ({ route, userProfile, setUserProfile }) => {
     userProfile?.centerAddress
   );
   const ref = useRef();
+
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+
+      () => {
+        return true;
+      }
+    );
+
+    return () => backHandler.remove();
+  }, []);
 
   useEffect(() => {
     if (userProfile) {
