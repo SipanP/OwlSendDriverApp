@@ -117,6 +117,7 @@ const ContinueRegisterScreen = ({ route, userProfile, setUserProfile }) => {
       useLiveLocation: liveLocation,
       vehicle: selectedVehicle,
       online: false,
+      available: false,
       // currentLocation:
     };
 

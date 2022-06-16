@@ -22,6 +22,7 @@ const HomeScreen = ({ navigation, userProfile }) => {
   const driverOrders = doc(db, "DriverOrders", userProfile.phone);
   const registeredDrivers = doc(db, "RegisteredDrivers", userProfile.phone);
   const [online, setOnline] = useState(false);
+  const [available, setAvailable] = useState(false);
   const [userDoc, setUserDoc] = useState(null);
   const [origin, setOrigin] = useState(null);
   const [destination, setDestination] = useState(null);
@@ -46,11 +47,30 @@ const HomeScreen = ({ navigation, userProfile }) => {
     currency: "GBP",
   });
 
+  const makeAvailable = async () => {
+    if (!available) {
+      setAvailable(true);
+      await updateDoc(registeredDrivers, {
+        available: true,
+      });
+    }
+  };
+
+  const makeUnavailable = async () => {
+    if (available) {
+      setAvailable(false);
+      await updateDoc(registeredDrivers, {
+        available: false,
+      });
+    }
+  };
+
   const goOnline = async () => {
     setOnline(true);
     await updateDoc(registeredDrivers, {
       online: true,
     });
+    makeAvailable();
   };
 
   const goOffline = async () => {
@@ -58,6 +78,7 @@ const HomeScreen = ({ navigation, userProfile }) => {
     await updateDoc(registeredDrivers, {
       online: false,
     });
+    makeUnavailable();
   };
 
   useEffect(() => {
@@ -72,6 +93,7 @@ const HomeScreen = ({ navigation, userProfile }) => {
   useEffect(() => {
     return onSnapshot(registeredDrivers, (doc) => {
       setOnline(doc.data().online);
+      setAvailable(doc.data().available);
     });
   }, []);
 
@@ -112,6 +134,7 @@ const HomeScreen = ({ navigation, userProfile }) => {
       if (userDoc.status === "pickup" || userDoc.status === "dropoff") {
         setPickup(true);
       }
+      makeUnavailable();
     }
   }, [userDoc, online]);
 
@@ -133,6 +156,7 @@ const HomeScreen = ({ navigation, userProfile }) => {
     }).start();
     setOrigin(null);
     setDestination(null);
+    makeAvailable();
   };
 
   // This function is called when the driver accepts the order
@@ -167,6 +191,7 @@ const HomeScreen = ({ navigation, userProfile }) => {
     setShowModal(false);
     setOrigin(null);
     setDestination(null);
+    makeAvailable();
   };
 
   return (
