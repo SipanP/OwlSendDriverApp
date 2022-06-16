@@ -158,11 +158,15 @@ const HomeScreen = ({ navigation, userProfile }) => {
   return (
     <View style={styles.container}>
       <Map style={{ flex: 1 }} origin={origin} destination={destination} />
-      <View style={styles.settingsIcon}>
-        <TouchableOpacity onPress={() => navigation.navigate("StartRegister")}>
-          <FontAwesome name="cog" size={50} color={Colors.primary} />
-        </TouchableOpacity>
-      </View>
+      {!showModal && (
+        <View style={styles.settingsIcon}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate("StartRegister")}
+          >
+            <FontAwesome name="cog" size={50} color={Colors.primary} />
+          </TouchableOpacity>
+        </View>
+      )}
       <View
         style={{
           position: "absolute",
