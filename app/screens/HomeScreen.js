@@ -1,13 +1,22 @@
 import { doc, onSnapshot, updateDoc } from "firebase/firestore";
 import React, { useEffect, useState, useRef } from "react";
-import { StyleSheet, TouchableOpacity, View, Animated } from "react-native";
+import {
+  StyleSheet,
+  TouchableOpacity,
+  View,
+  Animated,
+  Text,
+  Button,
+} from "react-native";
 import GoButton from "../components/GoButton";
 import Map from "../components/Map";
 import StopButton from "../components/StopButton";
 import { db } from "../core/Config";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import Colors from "../core/Colors";
 import NewOrder from "../components/NewOrder";
+import Modal from "react-native-modal";
 
 const HomeScreen = ({ navigation, userProfile }) => {
   const driverOrders = doc(db, "DriverOrders", userProfile.phone);
@@ -18,6 +27,12 @@ const HomeScreen = ({ navigation, userProfile }) => {
   const [destination, setDestination] = useState(null);
   const [pickup, setPickup] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [moneyModalVisible, setMoneyModalVisible] = useState(false);
+
+  var formatter = new Intl.NumberFormat("en-UK", {
+    style: "currency",
+    currency: "GBP",
+  });
 
   const goOnline = async () => {
     setOnline(true);
@@ -121,6 +136,25 @@ const HomeScreen = ({ navigation, userProfile }) => {
     });
   };
 
+  const arrived = async () => {
+    setMoneyModalVisible(true);
+    Animated.spring(slideAnim, {
+      toValue: 600,
+      velocity: 3,
+      tension: 2,
+      friction: 8,
+      useNativeDriver: false,
+    }).start();
+    await updateDoc(driverOrders, {
+      status: "arrived",
+    });
+    setTimeout(() => {
+      setMoneyModalVisible(false);
+    }, 4000);
+    setPickup(false);
+    setShowModal(false);
+  };
+
   return (
     <View style={styles.container}>
       <Map style={{ flex: 1 }} origin={origin} destination={destination} />
@@ -143,6 +177,21 @@ const HomeScreen = ({ navigation, userProfile }) => {
           {online && !showModal && <StopButton onPress={goOffline} />}
         </View>
       </View>
+
+      <Modal
+        animationType="fade"
+        isVisible={moneyModalVisible}
+        onRequestClose={() => {
+          setMoneyModalVisible(!moneyModalVisible);
+        }}
+      >
+        <View style={{ flexDirection: "row", justifyContent: "center" }}>
+          <Text style={{ color: "white", fontSize: 30, fontWeight: "700" }}>
+            You've earned {formatter.format(userDoc?.price)}!
+          </Text>
+          <MaterialIcons name="celebration" size={30} color="white" />
+        </View>
+      </Modal>
       <Animated.View
         style={[
           {
@@ -162,6 +211,7 @@ const HomeScreen = ({ navigation, userProfile }) => {
           style={styles.modal}
           pickup={pickup}
           pickedUp={pickedUp}
+          arrived={arrived}
         />
       </Animated.View>
     </View>

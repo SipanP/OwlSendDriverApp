@@ -4,14 +4,30 @@ import DeliveryInformationCard from "./DeliveryInformationCard";
 import Colors from "../core/Colors";
 import { TouchableOpacity } from "react-native";
 
-const NewOrder = ({ userDoc, hideModal, acceptOrder, pickup, pickedUp }) => {
+const NewOrder = ({
+  userDoc,
+  hideModal,
+  acceptOrder,
+  pickup,
+  pickedUp,
+  arrived,
+}) => {
   var formatter = new Intl.NumberFormat("en-UK", {
     style: "currency",
     currency: "GBP",
   });
   const [accepted, setAccepted] = useState(false);
   const [delivering, setDelivering] = useState(false);
-
+  if (
+    userDoc?.status === "pending" ||
+    userDoc?.status === "accepted" ||
+    userDoc?.status === "declined"
+  ) {
+    var fullInfo = false;
+  } else {
+    // pickup, dropoff, arrived
+    var fullInfo = true;
+  }
   return (
     <View style={styles.container}>
       <DeliveryInformationCard
@@ -19,7 +35,7 @@ const NewOrder = ({ userDoc, hideModal, acceptOrder, pickup, pickedUp }) => {
         type={userDoc?.pickup.type}
         address={userDoc?.pickup.address}
         isOnRoute={userDoc?.status === "pickup"}
-        fullInfo={pickup}
+        status={userDoc?.status}
         phone={userDoc?.pickup.phone}
       />
       <DeliveryInformationCard
@@ -27,10 +43,10 @@ const NewOrder = ({ userDoc, hideModal, acceptOrder, pickup, pickedUp }) => {
         type={userDoc?.dropoff.type}
         address={userDoc?.dropoff.address}
         isOnRoute={userDoc?.status === "dropoff"}
-        fullInfo={pickup}
+        status={userDoc?.status}
         phone={userDoc?.dropoff.phone}
       />
-      {!pickup && (
+      {(userDoc?.status === "pending" || userDoc?.status === "accepted") && (
         <View
           style={{
             width: "100%",
@@ -51,7 +67,7 @@ const NewOrder = ({ userDoc, hideModal, acceptOrder, pickup, pickedUp }) => {
           </Text>
         </View>
       )}
-      {!accepted && !pickup && !delivering && (
+      {userDoc?.status === "pending" && (
         <View
           style={{
             width: "100%",
@@ -79,7 +95,7 @@ const NewOrder = ({ userDoc, hideModal, acceptOrder, pickup, pickedUp }) => {
           </TouchableOpacity>
         </View>
       )}
-      {accepted && !pickup && !delivering && (
+      {userDoc?.status === "accepted" && (
         <View
           style={{
             flexDirection: "row",
@@ -105,7 +121,7 @@ const NewOrder = ({ userDoc, hideModal, acceptOrder, pickup, pickedUp }) => {
           </Text>
         </View>
       )}
-      {pickup && !delivering && (
+      {userDoc?.status === "pickup" && (
         <View style={{ width: "100%", alignItems: "center" }}>
           <View
             style={{
@@ -131,7 +147,7 @@ const NewOrder = ({ userDoc, hideModal, acceptOrder, pickup, pickedUp }) => {
           </TouchableOpacity>
         </View>
       )}
-      {delivering && (
+      {userDoc?.status === "dropoff" && (
         <View style={{ width: "100%", alignItems: "center" }}>
           <View
             style={{
@@ -152,7 +168,9 @@ const NewOrder = ({ userDoc, hideModal, acceptOrder, pickup, pickedUp }) => {
               styles.pickedUpButton,
               { backgroundColor: "purple" },
             ]}
-            onPress={() => {}}
+            onPress={() => {
+              arrived();
+            }}
           >
             <Text style={{ color: "white", fontSize: 20 }}>ARRIVED</Text>
           </TouchableOpacity>

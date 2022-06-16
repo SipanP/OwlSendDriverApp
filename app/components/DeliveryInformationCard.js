@@ -10,7 +10,7 @@ const DeliveryInformationCard = ({
   address,
   type,
   isOnRoute,
-  fullInfo,
+  status,
   phone,
 }) => {
   const phoneArgs = {
@@ -18,6 +18,12 @@ const DeliveryInformationCard = ({
     prompt: true, // Optional boolean property. Determines if the user should be prompted prior to the call
     skipCanOpen: true, // Skip the canOpenURL check
   };
+  if (status === "pending" || status === "accepted" || status === "declined") {
+    var fullInfo = false;
+  } else {
+    // pickup, dropoff, arrived
+    var fullInfo = true;
+  }
   return (
     <View
       style={[
