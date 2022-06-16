@@ -1,4 +1,10 @@
-import { deleteDoc, doc, onSnapshot, updateDoc } from "firebase/firestore";
+import {
+  deleteDoc,
+  doc,
+  onSnapshot,
+  serverTimestamp,
+  updateDoc,
+} from "firebase/firestore";
 import React, { useEffect, useRef, useState } from "react";
 import {
   Animated,
@@ -198,6 +204,7 @@ const HomeScreen = ({ navigation, userProfile }) => {
       const userOrder = doc(db, "UserOrders", userDoc.userPhone);
       await updateDoc(userOrder, {
         status: "Delivered",
+        time: serverTimestamp(),
       });
     }
 
