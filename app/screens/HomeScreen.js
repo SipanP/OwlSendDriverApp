@@ -165,6 +165,8 @@ const HomeScreen = ({ navigation, userProfile }) => {
     }, 4000);
     setPickup(false);
     setShowModal(false);
+    setOrigin(null);
+    setDestination(null);
   };
 
   return (
