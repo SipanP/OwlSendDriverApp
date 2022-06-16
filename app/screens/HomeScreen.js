@@ -199,6 +199,11 @@ const HomeScreen = ({ navigation, userProfile }) => {
       useNativeDriver: false,
     }).start();
 
+    // Update driver order status to arrived
+    await updateDoc(driverOrders, {
+      status: "arrived",
+    });
+
     // Update user order on firebase to notify user delivered when type is Deliver
     if (userDoc.dropoff.type === "Deliver") {
       const userOrder = doc(db, "UserOrders", userDoc.userPhone);
@@ -208,10 +213,7 @@ const HomeScreen = ({ navigation, userProfile }) => {
       });
     }
 
-    // Delete driver order when delivered
-    await deleteDoc(driverOrders);
-
-    setTimeout(() => {
+    setTimeout(async () => {
       setMoneyModalVisible(false);
     }, 4000);
     setPickup(false);
