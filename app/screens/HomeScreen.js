@@ -1,6 +1,6 @@
 import {
-  deleteDoc,
   doc,
+  increment,
   onSnapshot,
   serverTimestamp,
   updateDoc,
@@ -35,6 +35,7 @@ const HomeScreen = ({ navigation, userProfile }) => {
   const [pickup, setPickup] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [moneyModalVisible, setMoneyModalVisible] = useState(false);
+  const [sessionEarned, setSessionEarned] = useState(0.0);
 
   useEffect(() => {
     const backHandler = BackHandler.addEventListener(
@@ -75,6 +76,7 @@ const HomeScreen = ({ navigation, userProfile }) => {
     setOnline(true);
     await updateDoc(registeredDrivers, {
       online: true,
+      sessionEarned: 0.0, // Reset session earned
     });
     makeAvailable();
   };
@@ -99,6 +101,7 @@ const HomeScreen = ({ navigation, userProfile }) => {
     return onSnapshot(registeredDrivers, (doc) => {
       setOnline(doc.data().online);
       setAvailable(doc.data().available);
+      setSessionEarned(doc.data().sessionEarned);
     });
   }, []);
 
@@ -213,6 +216,11 @@ const HomeScreen = ({ navigation, userProfile }) => {
       });
     }
 
+    // Increment session earned
+    await updateDoc(registeredDrivers, {
+      sessionEarned: increment(userDoc.price),
+    });
+
     setTimeout(async () => {
       setMoneyModalVisible(false);
     }, 4000);
@@ -226,6 +234,11 @@ const HomeScreen = ({ navigation, userProfile }) => {
   return (
     <View style={styles.container}>
       <Map style={{ flex: 1 }} origin={origin} destination={destination} />
+      <View style={styles.sessionEarned}>
+        <Text style={styles.sessionEarnedText}>
+          {formatter.format(sessionEarned)}
+        </Text>
+      </View>
       {!showModal && (
         <View style={styles.settingsIcon}>
           <TouchableOpacity
@@ -306,5 +319,23 @@ const styles = StyleSheet.create({
   modal: {
     position: "absolute",
     zIndex: 9999,
+  },
+  sessionEarned: {
+    backgroundColor: Colors.primarySeeThrough,
+    position: "absolute",
+    top: "8%",
+    left: "5%",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 15,
+    borderColor: Colors.darkPrimary,
+    borderWidth: 2,
+    paddingHorizontal: 10,
+    paddingVertical: 7,
+  },
+  sessionEarnedText: {
+    fontSize: 26,
+    fontWeight: "700",
+    color: Colors.dark,
   },
 });
