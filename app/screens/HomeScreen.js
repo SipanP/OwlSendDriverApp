@@ -1,22 +1,22 @@
-import { doc, onSnapshot, updateDoc } from "firebase/firestore";
-import React, { useEffect, useState, useRef } from "react";
+import { deleteDoc, doc, onSnapshot, updateDoc } from "firebase/firestore";
+import React, { useEffect, useRef, useState } from "react";
 import {
+  Animated,
+  BackHandler,
   StyleSheet,
+  Text,
   TouchableOpacity,
   View,
-  Animated,
-  Text,
-  BackHandler,
 } from "react-native";
-import GoButton from "../components/GoButton";
-import Map from "../components/Map";
-import StopButton from "../components/StopButton";
-import { db } from "../core/Config";
+import Modal from "react-native-modal";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
-import Colors from "../core/Colors";
+import GoButton from "../components/GoButton";
+import Map from "../components/Map";
 import NewOrder from "../components/NewOrder";
-import Modal from "react-native-modal";
+import StopButton from "../components/StopButton";
+import Colors from "../core/Colors";
+import { db } from "../core/Config";
 
 const HomeScreen = ({ navigation, userProfile }) => {
   const driverOrders = doc(db, "DriverOrders", userProfile.phone);
@@ -84,7 +84,6 @@ const HomeScreen = ({ navigation, userProfile }) => {
   useEffect(() => {
     // console.log(userProfile);
 
-    // Read();
     return onSnapshot(driverOrders, (doc) => {
       setUserDoc(doc.data());
     });
@@ -135,6 +134,8 @@ const HomeScreen = ({ navigation, userProfile }) => {
         setPickup(true);
       }
       makeUnavailable();
+    } else if (!userDoc && showModal) {
+      hideModal();
     }
   }, [userDoc, online]);
 
@@ -144,9 +145,11 @@ const HomeScreen = ({ navigation, userProfile }) => {
   const hideModal = async () => {
     setShowModal(false);
     // Change userDoc status to declined.
-    await updateDoc(driverOrders, {
-      status: "declined",
-    });
+    if (userDoc) {
+      await updateDoc(driverOrders, {
+        status: "declined",
+      });
+    }
     Animated.spring(slideAnim, {
       toValue: 600,
       velocity: 3,
@@ -170,6 +173,14 @@ const HomeScreen = ({ navigation, userProfile }) => {
     await updateDoc(driverOrders, {
       status: "dropoff",
     });
+
+    // Update user order on firebase to notify user delivering when type is pickup
+    if (userDoc.pickup.type === "Pickup") {
+      const userOrder = doc(db, "UserOrders", userDoc.userPhone);
+      await updateDoc(userOrder, {
+        status: "Delivering",
+      });
+    }
   };
 
   const arrived = async () => {
@@ -181,9 +192,18 @@ const HomeScreen = ({ navigation, userProfile }) => {
       friction: 8,
       useNativeDriver: false,
     }).start();
-    await updateDoc(driverOrders, {
-      status: "arrived",
-    });
+
+    // Update user order on firebase to notify user delivered when type is Deliver
+    if (userDoc.dropoff.type === "Deliver") {
+      const userOrder = doc(db, "UserOrders", userDoc.userPhone);
+      await updateDoc(userOrder, {
+        status: "Delivered",
+      });
+    }
+
+    // Delete driver order when delivered
+    await deleteDoc(driverOrders);
+
     setTimeout(() => {
       setMoneyModalVisible(false);
     }, 4000);
