@@ -10,6 +10,7 @@ import {
   View,
   TouchableWithoutFeedback,
   Keyboard,
+  BackHandler,
 } from "react-native";
 import {
   Button,
@@ -17,7 +18,6 @@ import {
   CheckBox,
   Input,
   Text,
-  BackHandler,
 } from "react-native-elements";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
