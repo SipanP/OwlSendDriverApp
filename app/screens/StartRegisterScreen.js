@@ -7,6 +7,7 @@ import {
   View,
   TouchableWithoutFeedback,
   Keyboard,
+  BackHandler,
 } from "react-native";
 import { Button, Input, Text } from "react-native-elements";
 import Colors from "../core/Colors";
@@ -15,6 +16,18 @@ const StartRegisterScreen = ({ navigation, userProfile }) => {
   const [tel, setTel] = useState(userProfile?.phone);
   const [firstName, setFirstName] = useState(userProfile?.firstName);
   const [lastName, setLastName] = useState(userProfile?.lastName);
+
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+
+      () => {
+        return true;
+      }
+    );
+
+    return () => backHandler.remove();
+  }, []);
 
   useEffect(() => {
     if (userProfile) {
