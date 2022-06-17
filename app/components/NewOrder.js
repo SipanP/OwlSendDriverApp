@@ -3,6 +3,8 @@ import React, { useState } from "react";
 import DeliveryInformationCard from "./DeliveryInformationCard";
 import Colors from "../core/Colors";
 import { TouchableOpacity } from "react-native";
+import "intl";
+import "intl/locale-data/jsonp/en";
 
 const NewOrder = ({
   userDoc,

@@ -23,6 +23,8 @@ import NewOrder from "../components/NewOrder";
 import StopButton from "../components/StopButton";
 import Colors from "../core/Colors";
 import { db } from "../core/Config";
+import "intl";
+import "intl/locale-data/jsonp/en";
 
 const HomeScreen = ({ navigation, userProfile }) => {
   const driverOrders = doc(db, "DriverOrders", userProfile.phone);
