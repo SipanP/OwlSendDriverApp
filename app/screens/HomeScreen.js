@@ -4,6 +4,7 @@ import {
   onSnapshot,
   serverTimestamp,
   updateDoc,
+  deleteDoc,
 } from "firebase/firestore";
 import React, { useEffect, useRef, useState } from "react";
 import {
@@ -204,11 +205,6 @@ const HomeScreen = ({ navigation, userProfile }) => {
       useNativeDriver: false,
     }).start();
 
-    // Update driver order status to arrived
-    await updateDoc(driverOrders, {
-      status: "arrived",
-    });
-
     // Update user order on firebase to notify user delivered when type is Deliver
     if (userDoc.dropoff.type === "Deliver") {
       const userOrder = doc(db, "UserOrders", userDoc.userPhone);
@@ -225,12 +221,15 @@ const HomeScreen = ({ navigation, userProfile }) => {
 
     setTimeout(async () => {
       setMoneyModalVisible(false);
+
+      // Delete driver order once completed
+      await deleteDoc(driverOrders);
+      makeAvailable();
     }, 4000);
     setPickup(false);
     setShowModal(false);
     setOrigin(null);
     setDestination(null);
-    makeAvailable();
   };
 
   return (
