@@ -1,12 +1,15 @@
+import { StatusBar } from "expo-status-bar";
 import {
+  deleteDoc,
   doc,
   increment,
   onSnapshot,
   serverTimestamp,
   updateDoc,
-  deleteDoc,
 } from "firebase/firestore";
-import React, { useEffect, useRef, useState } from "react";
+import "intl";
+import "intl/locale-data/jsonp/en";
+import { useEffect, useRef, useState } from "react";
 import {
   Animated,
   BackHandler,
@@ -24,8 +27,6 @@ import NewOrder from "../components/NewOrder";
 import StopButton from "../components/StopButton";
 import Colors from "../core/Colors";
 import { db } from "../core/Config";
-import "intl";
-import "intl/locale-data/jsonp/en";
 
 const HomeScreen = ({ navigation, userProfile }) => {
   const driverOrders = doc(db, "DriverOrders", userProfile.phone);
@@ -234,6 +235,7 @@ const HomeScreen = ({ navigation, userProfile }) => {
 
   return (
     <View style={styles.container}>
+      <StatusBar style="dark" />
       <Map style={{ flex: 1 }} origin={origin} destination={destination} />
       <View style={styles.sessionEarned}>
         <Text style={styles.sessionEarnedText}>
