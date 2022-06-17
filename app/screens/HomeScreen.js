@@ -32,7 +32,7 @@ const HomeScreen = ({ navigation, userProfile }) => {
   const registeredDrivers = doc(db, "RegisteredDrivers", userProfile.phone);
   const [online, setOnline] = useState(false);
   const [available, setAvailable] = useState(false);
-  const [userDoc, setUserDoc] = useState(null);
+  const [driverDoc, setDriverDoc] = useState(null);
   const [origin, setOrigin] = useState(null);
   const [destination, setDestination] = useState(null);
   const [pickup, setPickup] = useState(false);
@@ -96,7 +96,7 @@ const HomeScreen = ({ navigation, userProfile }) => {
     // console.log(userProfile);
 
     return onSnapshot(driverOrders, (doc) => {
-      setUserDoc(doc.data());
+      setDriverDoc(doc.data());
     });
   }, []);
 
@@ -110,26 +110,26 @@ const HomeScreen = ({ navigation, userProfile }) => {
 
   useEffect(() => {
     if (
-      userDoc &&
+      driverDoc &&
       online &&
-      (userDoc.status === "pending" ||
-        userDoc.status === "accepted" ||
-        userDoc.status === "pickup" ||
-        userDoc.status === "dropoff")
+      (driverDoc.status === "pending" ||
+        driverDoc.status === "accepted" ||
+        driverDoc.status === "pickup" ||
+        driverDoc.status === "dropoff")
     ) {
       setOrigin({
         location: {
-          lat: userDoc.pickup.location.latitude,
-          lng: userDoc.pickup.location.longitude,
+          lat: driverDoc.pickup.location.latitude,
+          lng: driverDoc.pickup.location.longitude,
         },
-        description: userDoc.pickup.postcode,
+        description: driverDoc.pickup.postcode,
       });
       setDestination({
         location: {
-          lat: userDoc.dropoff.location.latitude,
-          lng: userDoc.dropoff.location.longitude,
+          lat: driverDoc.dropoff.location.latitude,
+          lng: driverDoc.dropoff.location.longitude,
         },
-        description: userDoc.dropoff.postcode,
+        description: driverDoc.dropoff.postcode,
       });
 
       setShowModal(true);
@@ -142,22 +142,22 @@ const HomeScreen = ({ navigation, userProfile }) => {
         useNativeDriver: false,
       }).start();
 
-      if (userDoc.status === "pickup" || userDoc.status === "dropoff") {
+      if (driverDoc.status === "pickup" || driverDoc.status === "dropoff") {
         setPickup(true);
       }
       makeUnavailable();
-    } else if (!userDoc && showModal) {
+    } else if (!driverDoc && showModal) {
       hideModal();
     }
-  }, [userDoc, online]);
+  }, [driverDoc, online]);
 
   // slideAnim will be used as the value for position. Initial Value: 100
   const slideAnim = useRef(new Animated.Value(600)).current;
   // This function is called when the driver declines the order
   const hideModal = async () => {
     setShowModal(false);
-    // Change userDoc status to declined.
-    if (userDoc) {
+    // Change driverDoc status to declined.
+    if (driverDoc) {
       await updateDoc(driverOrders, {
         status: "declined",
       });
@@ -187,8 +187,8 @@ const HomeScreen = ({ navigation, userProfile }) => {
     });
 
     // Update user order on firebase to notify user delivering when type is pickup
-    if (userDoc.pickup.type === "Pickup") {
-      const userOrder = doc(db, "UserOrders", userDoc.userPhone);
+    if (driverDoc.pickup.type === "Pickup") {
+      const userOrder = doc(db, "UserOrders", driverDoc.userPhone);
       await updateDoc(userOrder, {
         status: "Delivering",
       });
@@ -206,8 +206,8 @@ const HomeScreen = ({ navigation, userProfile }) => {
     }).start();
 
     // Update user order on firebase to notify user delivered when type is Deliver
-    if (userDoc.dropoff.type === "Deliver") {
-      const userOrder = doc(db, "UserOrders", userDoc.userPhone);
+    if (driverDoc.dropoff.type === "Deliver") {
+      const userOrder = doc(db, "UserOrders", driverDoc.userPhone);
       await updateDoc(userOrder, {
         status: "Delivered",
         time: serverTimestamp(),
@@ -216,7 +216,7 @@ const HomeScreen = ({ navigation, userProfile }) => {
 
     // Increment session earned
     await updateDoc(registeredDrivers, {
-      sessionEarned: increment(userDoc.price),
+      sessionEarned: increment(driverDoc.price),
     });
 
     setTimeout(async () => {
@@ -273,7 +273,7 @@ const HomeScreen = ({ navigation, userProfile }) => {
       >
         <View style={{ flexDirection: "row", justifyContent: "center" }}>
           <Text style={{ color: "white", fontSize: 30, fontWeight: "700" }}>
-            You've earned {formatter.format(userDoc?.price)}!
+            You've earned {formatter.format(driverDoc?.price)}!
           </Text>
           <MaterialIcons name="celebration" size={30} color="white" />
         </View>
@@ -291,11 +291,10 @@ const HomeScreen = ({ navigation, userProfile }) => {
         ]}
       >
         <NewOrder
-          userDoc={userDoc}
+          driverDoc={driverDoc}
           hideModal={hideModal}
           acceptOrder={acceptOrder}
           style={styles.modal}
-          pickup={pickup}
           pickedUp={pickedUp}
           arrived={arrived}
         />

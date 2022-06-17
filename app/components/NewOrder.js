@@ -6,14 +6,7 @@ import { TouchableOpacity } from "react-native";
 import "intl";
 import "intl/locale-data/jsonp/en";
 
-const NewOrder = ({
-  userDoc,
-  hideModal,
-  acceptOrder,
-  pickup,
-  pickedUp,
-  arrived,
-}) => {
+const NewOrder = ({ driverDoc, hideModal, acceptOrder, pickedUp, arrived }) => {
   var formatter = new Intl.NumberFormat("en-UK", {
     style: "currency",
     currency: "GBP",
@@ -21,9 +14,9 @@ const NewOrder = ({
   const [accepted, setAccepted] = useState(false);
   const [delivering, setDelivering] = useState(false);
   if (
-    userDoc?.status === "pending" ||
-    userDoc?.status === "accepted" ||
-    userDoc?.status === "declined"
+    driverDoc?.status === "pending" ||
+    driverDoc?.status === "accepted" ||
+    driverDoc?.status === "declined"
   ) {
     var fullInfo = false;
   } else {
@@ -33,22 +26,23 @@ const NewOrder = ({
   return (
     <View style={styles.container}>
       <DeliveryInformationCard
-        name={userDoc?.pickup.name}
-        type={userDoc?.pickup.type}
-        address={userDoc?.pickup.address}
-        isOnRoute={userDoc?.status === "pickup"}
-        status={userDoc?.status}
-        phone={userDoc?.pickup.phone}
+        name={driverDoc?.pickup.name}
+        type={driverDoc?.pickup.type}
+        address={driverDoc?.pickup.address}
+        isOnRoute={driverDoc?.status === "pickup"}
+        status={driverDoc?.status}
+        phone={driverDoc?.pickup.phone}
       />
       <DeliveryInformationCard
-        name={userDoc?.dropoff.name}
-        type={userDoc?.dropoff.type}
-        address={userDoc?.dropoff.address}
-        isOnRoute={userDoc?.status === "dropoff"}
-        status={userDoc?.status}
-        phone={userDoc?.dropoff.phone}
+        name={driverDoc?.dropoff.name}
+        type={driverDoc?.dropoff.type}
+        address={driverDoc?.dropoff.address}
+        isOnRoute={driverDoc?.status === "dropoff"}
+        status={driverDoc?.status}
+        phone={driverDoc?.dropoff.phone}
       />
-      {(userDoc?.status === "pending" || userDoc?.status === "accepted") && (
+      {(driverDoc?.status === "pending" ||
+        driverDoc?.status === "accepted") && (
         <View
           style={{
             width: "100%",
@@ -59,17 +53,17 @@ const NewOrder = ({
           }}
         >
           <Text style={{ color: "white", fontSize: 40 }}>
-            {userDoc?.minutes} min
+            {driverDoc?.minutes} min
           </Text>
           <Text style={{ color: "white", fontSize: 40 }}>
-            {userDoc?.distance} mi
+            {driverDoc?.distance} mi
           </Text>
           <Text style={{ color: "white", fontSize: 40 }}>
-            {formatter.format(userDoc?.price)}
+            {formatter.format(driverDoc?.price)}
           </Text>
         </View>
       )}
-      {userDoc?.status === "pending" && (
+      {driverDoc?.status === "pending" && (
         <View
           style={{
             width: "100%",
@@ -97,7 +91,7 @@ const NewOrder = ({
           </TouchableOpacity>
         </View>
       )}
-      {userDoc?.status === "accepted" && (
+      {driverDoc?.status === "accepted" && (
         <View
           style={{
             flexDirection: "row",
@@ -123,7 +117,7 @@ const NewOrder = ({
           </Text>
         </View>
       )}
-      {userDoc?.status === "pickup" && (
+      {driverDoc?.status === "pickup" && (
         <View style={{ width: "100%", alignItems: "center" }}>
           <View
             style={{
@@ -149,7 +143,7 @@ const NewOrder = ({
           </TouchableOpacity>
         </View>
       )}
-      {userDoc?.status === "dropoff" && (
+      {driverDoc?.status === "dropoff" && (
         <View style={{ width: "100%", alignItems: "center" }}>
           <View
             style={{

@@ -41,8 +41,8 @@ const ContinueRegisterScreen = ({ route, userProfile, setUserProfile }) => {
   const [selectedVehicle, setSelectedVehicle] = useState(
     userProfile ? userProfile.vehicle : 0
   );
-  const [liveLocation, setLiveLocation] = useState(
-    userProfile ? userProfile.liveLocation : false
+  const [showNearbyOrders, setShowNearbyOrders] = useState(
+    userProfile ? userProfile.showNearbyOrders : false
   );
   const [radius, setRadius] = useState(
     userProfile?.radius ? userProfile.radius.toString() : ""
@@ -80,7 +80,7 @@ const ContinueRegisterScreen = ({ route, userProfile, setUserProfile }) => {
       height: parseInt(height),
       weight: parseFloat(weight),
       vehicle: selectedVehicle,
-      liveLocation: liveLocation,
+      showNearbyOrders: showNearbyOrders,
       radius: parseFloat(radius),
       centerAddress: centerAddress,
     };
@@ -114,7 +114,7 @@ const ContinueRegisterScreen = ({ route, userProfile, setUserProfile }) => {
         centerAddress ? centerAddress.location.longitude : null
       ),
       radius: parseFloat(radius),
-      useLiveLocation: liveLocation,
+      showNearbyOrders: showNearbyOrders,
       vehicle: selectedVehicle,
       online: false,
       available: false,
@@ -232,9 +232,9 @@ const ContinueRegisterScreen = ({ route, userProfile, setUserProfile }) => {
               textStyle={{ fontWeight: "500" }}
               checkedColor={Colors.primary}
               title="Show Nearby Orders"
-              checked={liveLocation}
+              checked={showNearbyOrders}
               onPress={() => {
-                setLiveLocation(!liveLocation);
+                setShowNearbyOrders(!showNearbyOrders);
               }}
             />
             <Input
