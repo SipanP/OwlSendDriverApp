@@ -81,7 +81,9 @@ const DeliveryInformationCard = ({
           {fullInfo && address}
           {!fullInfo && (
             <Text style={{ fontSize: 20 }}>
-              {address?.slice(address?.indexOf(",") + 2, address.length)}
+              {address?.includes(",")
+                ? address?.slice(address?.indexOf(",") + 2, address.length)
+                : address}
             </Text>
           )}
         </Text>

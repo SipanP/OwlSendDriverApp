@@ -238,7 +238,8 @@ const HomeScreen = ({ navigation, userProfile }) => {
       <StatusBar style="dark" />
       <Map style={{ flex: 1 }} origin={origin} destination={destination} />
       <View style={styles.sessionEarned}>
-        <Text style={styles.sessionEarnedText}>
+        <Text style={{ fontWeight: "700" }}>SESSION</Text>
+        <Text style={{ fontSize: 26, fontWeight: "700" }}>
           {formatter.format(sessionEarned)}
         </Text>
       </View>
@@ -333,11 +334,6 @@ const styles = StyleSheet.create({
     borderColor: Colors.darkPrimary,
     borderWidth: 2,
     paddingHorizontal: 10,
-    paddingVertical: 7,
-  },
-  sessionEarnedText: {
-    fontSize: 26,
-    fontWeight: "700",
-    color: Colors.dark,
+    paddingVertical: 3,
   },
 });
