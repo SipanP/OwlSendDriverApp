@@ -11,6 +11,7 @@ import "intl";
 import "intl/locale-data/jsonp/en";
 import { useEffect, useRef, useState } from "react";
 import {
+  Alert,
   Animated,
   BackHandler,
   StyleSheet,
@@ -27,6 +28,13 @@ import NewOrder from "../components/NewOrder";
 import StopButton from "../components/StopButton";
 import Colors from "../core/Colors";
 import { db } from "../core/Config";
+
+// Number of seconds before driver deletes driver order yet to be confirmed by user in case the user crashed
+const TIMEOUT_SECONDS = 300;
+let timeoutTimer = null;
+
+// Indicates whether driver has accepted an order but still waiting for other drivers
+let waitingForOtherDrivers = false;
 
 const HomeScreen = ({ navigation, userProfile }) => {
   const driverOrders = doc(db, "DriverOrders", userProfile.phone);
@@ -145,10 +153,32 @@ const HomeScreen = ({ navigation, userProfile }) => {
 
       if (driverDoc.status === "pickup" || driverDoc.status === "dropoff") {
         setPickup(true);
+        clearTimeout(timeoutTimer);
+        waitingForOtherDrivers = false;
       }
       makeUnavailable();
+
+      if (driverDoc.status === "pending") {
+        timeoutTimer = setTimeout(async () => {
+          // Delete driver order once timeout
+          await deleteDoc(driverOrders);
+
+          // If driver already accepted order issue apology
+          if (waitingForOtherDrivers) {
+            Alert.alert("Sorry, unable to find other drivers to handoff.");
+            waitingForOtherDrivers = false;
+          }
+        }, TIMEOUT_SECONDS * 1000);
+      }
     } else if (!driverDoc && showModal) {
+      clearTimeout(timeoutTimer);
       hideModal();
+
+      // If driver already accepted order issue apology
+      if (waitingForOtherDrivers) {
+        Alert.alert("Sorry, unable to find other drivers to handoff.");
+        waitingForOtherDrivers = false;
+      }
     }
   }, [driverDoc, online]);
 
@@ -177,6 +207,7 @@ const HomeScreen = ({ navigation, userProfile }) => {
 
   // This function is called when the driver accepts the order
   const acceptOrder = async () => {
+    waitingForOtherDrivers = true;
     await updateDoc(driverOrders, {
       status: "accepted",
     });

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Image, StyleSheet } from "react-native";
+import { Image } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import MapViewDirections from "react-native-maps-directions";
 import Colors from "../core/Colors";
@@ -60,8 +60,12 @@ const Map = ({ origin, destination }) => {
           title="Pickup"
           description={origin.description}
           identifier="origin"
-          image={require("../assets/location.png")}
-        />
+        >
+          <Image
+            source={require("../assets/location.png")}
+            style={{ height: 25, width: 25 }}
+          />
+        </Marker>
       )}
       {destination?.location && (
         <Marker
@@ -72,8 +76,12 @@ const Map = ({ origin, destination }) => {
           title="Dropoff"
           description={destination.description}
           identifier="destination"
-          image={require("../assets/destination.png")}
-        />
+        >
+          <Image
+            source={require("../assets/destination.png")}
+            style={{ height: 25, width: 25 }}
+          />
+        </Marker>
       )}
       {origin && destination && (
         <MapViewDirections
@@ -95,5 +103,3 @@ const Map = ({ origin, destination }) => {
 };
 
 export default Map;
-
-const styles = StyleSheet.create({});
