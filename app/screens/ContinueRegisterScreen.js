@@ -29,15 +29,19 @@ const ContinueRegisterScreen = ({ route, userProfile, setUserProfile }) => {
   const [length, setLength] = useState(
     userProfile?.length ? userProfile.length.toString() : ""
   );
+  const [invalidLength, setInvalidLength] = useState(false);
   const [width, setWidth] = useState(
     userProfile?.width ? userProfile.width.toString() : ""
   );
+  const [invalidWidth, setInvalidWidth] = useState(false);
   const [height, setHeight] = useState(
     userProfile?.height ? userProfile.height.toString() : ""
   );
+  const [invalidHeight, setInvalidHeight] = useState(false);
   const [weight, setWeight] = useState(
     userProfile?.weight ? userProfile.weight.toString() : ""
   );
+  const [invalidWeight, setInvalidWeight] = useState(false);
   const [selectedVehicle, setSelectedVehicle] = useState(
     userProfile ? userProfile.vehicle : 0
   );
@@ -47,6 +51,7 @@ const ContinueRegisterScreen = ({ route, userProfile, setUserProfile }) => {
   const [radius, setRadius] = useState(
     userProfile?.radius ? userProfile.radius.toString() : ""
   );
+  const [invalidRadius, setInvalidRadius] = useState(false);
   const [centerAddress, setCenterAddress] = useState(
     userProfile?.centerAddress
   );
@@ -225,7 +230,9 @@ const ContinueRegisterScreen = ({ route, userProfile, setUserProfile }) => {
               </TouchableOpacity>
             </View>
           </View>
-          <View style={{ flexDirection: "row" }}>
+          <View
+            style={{ flexDirection: "row", justifyContent: "space-between" }}
+          >
             <CheckBox
               containerStyle={{
                 width: "50%",
@@ -246,14 +253,18 @@ const ContinueRegisterScreen = ({ route, userProfile, setUserProfile }) => {
             />
             <Input
               containerStyle={{
-                width: "50%",
+                width: "45%",
                 marginTop: 5,
               }}
               placeholder="Radius (mi)"
               keyboardType="numeric"
               value={radius}
-              onChangeText={(text) => setRadius(text)}
+              onChangeText={(text) => {
+                setRadius(text);
+                setInvalidRadius(isNaN(text));
+              }}
               style={styles.sizeField}
+              errorMessage={invalidRadius && "Invalid number"}
             />
           </View>
           <Text style={{ color: "grey", marginLeft: 10 }}>
@@ -264,29 +275,45 @@ const ContinueRegisterScreen = ({ route, userProfile, setUserProfile }) => {
               placeholder="Length (cm)"
               keyboardType="numeric"
               value={length}
-              onChangeText={(text) => setLength(text)}
+              onChangeText={(text) => {
+                setLength(text);
+                setInvalidLength(isNaN(text));
+              }}
               style={styles.sizeField}
+              errorMessage={invalidLength && "Invalid"}
             />
             <Input
               placeholder="Width (cm)"
               keyboardType="numeric"
               value={width}
-              onChangeText={(text) => setWidth(text)}
+              onChangeText={(text) => {
+                setWidth(text);
+                setInvalidWidth(isNaN(text));
+              }}
               style={styles.sizeField}
+              errorMessage={invalidWidth && "Invalid"}
             />
             <Input
               placeholder="Height (cm)"
               keyboardType="numeric"
               value={height}
-              onChangeText={(text) => setHeight(text)}
+              onChangeText={(text) => {
+                setHeight(text);
+                setInvalidHeight(isNaN(text));
+              }}
               style={styles.sizeField}
+              errorMessage={invalidHeight && "Invalid"}
             />
             <Input
               placeholder="Weight (kg)"
               keyboardType="numeric"
               value={weight}
-              onChangeText={(text) => setWeight(text)}
+              onChangeText={(text) => {
+                setWeight(text);
+                setInvalidWeight(isNaN(text));
+              }}
               style={styles.sizeField}
+              errorMessage={invalidWeight && "Invalid"}
             />
           </View>
         </View>
@@ -296,7 +323,15 @@ const ContinueRegisterScreen = ({ route, userProfile, setUserProfile }) => {
           onPress={register}
           containerStyle={styles.button}
           buttonStyle={styles.buttonStyle}
-          disabled={(!centerAddress && !showNearbyOrders) || !radius}
+          disabled={
+            (!centerAddress && !showNearbyOrders) ||
+            !radius ||
+            invalidLength ||
+            invalidWidth ||
+            invalidHeight ||
+            invalidWeight ||
+            invalidRadius
+          }
         />
         <View style={{ height: 100 }} />
       </KeyboardAvoidingView>
