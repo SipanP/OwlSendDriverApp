@@ -36,9 +36,9 @@ let timeoutTimer = null;
 // Indicates whether driver has accepted an order but still waiting for other drivers
 let waitingForOtherDrivers = false;
 
-const HomeScreen = ({ navigation, userProfile }) => {
-  const driverOrders = doc(db, "DriverOrders", userProfile.phone);
-  const registeredDrivers = doc(db, "RegisteredDrivers", userProfile.phone);
+const HomeScreen = ({ navigation, driverProfile }) => {
+  const driverOrders = doc(db, "DriverOrders", driverProfile.phone);
+  const registeredDrivers = doc(db, "RegisteredDrivers", driverProfile.phone);
   const [online, setOnline] = useState(false);
   const [available, setAvailable] = useState(false);
   const [driverDoc, setDriverDoc] = useState(null);
@@ -102,7 +102,7 @@ const HomeScreen = ({ navigation, userProfile }) => {
   };
 
   useEffect(() => {
-    // console.log(userProfile);
+    // console.log(driverProfile);
 
     return onSnapshot(driverOrders, (doc) => {
       setDriverDoc(doc.data());
@@ -218,11 +218,18 @@ const HomeScreen = ({ navigation, userProfile }) => {
       status: "dropoff",
     });
 
-    // Update user order on firebase to notify user delivering when type is pickup
+    // Update user order on firebase to notify user delivering info
+    const userOrder = doc(db, "UserOrders", driverDoc.userPhone);
     if (driverDoc.pickup.type === "Pickup") {
-      const userOrder = doc(db, "UserOrders", driverDoc.userPhone);
       await updateDoc(userOrder, {
         status: "Delivering",
+      });
+    } else if (driverDoc.pickup.type === "Handoff") {
+      await updateDoc(userOrder, {
+        name: driverProfile.firstName + " " + driverProfile.lastName,
+        phone: driverProfile.phone,
+        vehicle: driverProfile.vehicle,
+        // time: driverDoc.dropoff.arriveBy
       });
     }
   };

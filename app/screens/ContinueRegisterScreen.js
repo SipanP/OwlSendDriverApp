@@ -24,36 +24,36 @@ import FontAwesome from "react-native-vector-icons/FontAwesome";
 import Colors from "../core/Colors";
 import { db } from "../core/Config";
 
-const ContinueRegisterScreen = ({ route, userProfile, setUserProfile }) => {
+const ContinueRegisterScreen = ({ route, driverProfile, setDriverProfile }) => {
   const { firstName, lastName, tel } = route.params;
   const [length, setLength] = useState(
-    userProfile?.length ? userProfile.length.toString() : ""
+    driverProfile?.length ? driverProfile.length.toString() : ""
   );
   const [invalidLength, setInvalidLength] = useState(false);
   const [width, setWidth] = useState(
-    userProfile?.width ? userProfile.width.toString() : ""
+    driverProfile?.width ? driverProfile.width.toString() : ""
   );
   const [invalidWidth, setInvalidWidth] = useState(false);
   const [height, setHeight] = useState(
-    userProfile?.height ? userProfile.height.toString() : ""
+    driverProfile?.height ? driverProfile.height.toString() : ""
   );
   const [invalidHeight, setInvalidHeight] = useState(false);
   const [weight, setWeight] = useState(
-    userProfile?.weight ? userProfile.weight.toString() : ""
+    driverProfile?.weight ? driverProfile.weight.toString() : ""
   );
   const [invalidWeight, setInvalidWeight] = useState(false);
   const [selectedVehicle, setSelectedVehicle] = useState(
-    userProfile ? userProfile.vehicle : 0
+    driverProfile ? driverProfile.vehicle : 0
   );
   const [showNearbyOrders, setShowNearbyOrders] = useState(
-    userProfile ? userProfile.showNearbyOrders : false
+    driverProfile ? driverProfile.showNearbyOrders : false
   );
   const [radius, setRadius] = useState(
-    userProfile?.radius ? userProfile.radius.toString() : ""
+    driverProfile?.radius ? driverProfile.radius.toString() : ""
   );
   const [invalidRadius, setInvalidRadius] = useState(false);
   const [centerAddress, setCenterAddress] = useState(
-    userProfile?.centerAddress
+    driverProfile?.centerAddress
   );
   const ref = useRef();
 
@@ -70,8 +70,8 @@ const ContinueRegisterScreen = ({ route, userProfile, setUserProfile }) => {
   }, []);
 
   useEffect(() => {
-    if (userProfile) {
-      ref.current?.setAddressText(userProfile.centerAddress?.address);
+    if (driverProfile) {
+      ref.current?.setAddressText(driverProfile.centerAddress?.address);
     }
   }, []);
 
@@ -100,7 +100,7 @@ const ContinueRegisterScreen = ({ route, userProfile, setUserProfile }) => {
     // Register driver on Firebase
     registerDriver();
 
-    setUserProfile(profile);
+    setDriverProfile(profile);
   };
 
   const registerDriver = async () => {

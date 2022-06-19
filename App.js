@@ -16,15 +16,15 @@ const globalScreenOptions = {
 
 export default function App() {
   const Stack = createNativeStackNavigator();
-  const [userProfile, setUserProfile] = useState(null);
+  const [driverProfile, setDriverProfile] = useState(null);
 
-  const getUserProfile = async () => {
+  const getDriverProfile = async () => {
     // Get user profile from device storage.
     // AsyncStorage.clear(); // Uncomment to clear user profile
     try {
       const user = JSON.parse(await AsyncStorage.getItem("profile"));
       if (user) {
-        setUserProfile(user.profile);
+        setDriverProfile(user.profile);
       }
     } catch (e) {
       console.log(e);
@@ -36,7 +36,7 @@ export default function App() {
       <HomeScreen
         navigation={navigation}
         route={route}
-        userProfile={userProfile}
+        driverProfile={driverProfile}
       />
     );
   };
@@ -46,7 +46,7 @@ export default function App() {
       <StartRegisterScreen
         navigation={navigation}
         route={route}
-        userProfile={userProfile}
+        driverProfile={driverProfile}
       />
     );
   };
@@ -56,14 +56,14 @@ export default function App() {
       <ContinueRegisterScreen
         navigation={navigation}
         route={route}
-        userProfile={userProfile}
-        setUserProfile={setUserProfile}
+        driverProfile={driverProfile}
+        setDriverProfile={setDriverProfile}
       />
     );
   };
 
   useEffect(() => {
-    getUserProfile();
+    getDriverProfile();
   }, []);
 
   return (

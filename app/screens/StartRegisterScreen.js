@@ -12,10 +12,10 @@ import {
 import { Button, Input, Text } from "react-native-elements";
 import Colors from "../core/Colors";
 
-const StartRegisterScreen = ({ navigation, userProfile }) => {
-  const [tel, setTel] = useState(userProfile?.phone);
-  const [firstName, setFirstName] = useState(userProfile?.firstName);
-  const [lastName, setLastName] = useState(userProfile?.lastName);
+const StartRegisterScreen = ({ navigation, driverProfile }) => {
+  const [tel, setTel] = useState(driverProfile?.phone);
+  const [firstName, setFirstName] = useState(driverProfile?.firstName);
+  const [lastName, setLastName] = useState(driverProfile?.lastName);
 
   useEffect(() => {
     const backHandler = BackHandler.addEventListener(
@@ -30,7 +30,7 @@ const StartRegisterScreen = ({ navigation, userProfile }) => {
   }, []);
 
   useEffect(() => {
-    if (userProfile) {
+    if (driverProfile) {
       navigation.navigate("Home");
     }
   }, []);
