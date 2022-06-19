@@ -75,9 +75,9 @@ const ContinueRegisterScreen = ({ route, userProfile, setUserProfile }) => {
       firstName: firstName,
       lastName: lastName,
       phone: tel,
-      length: parseInt(length),
-      width: parseInt(width),
-      height: parseInt(height),
+      length: parseFloat(length),
+      width: parseFloat(width),
+      height: parseFloat(height),
       weight: parseFloat(weight),
       vehicle: selectedVehicle,
       showNearbyOrders: showNearbyOrders,
@@ -101,12 +101,19 @@ const ContinueRegisterScreen = ({ route, userProfile, setUserProfile }) => {
   const registerDriver = async () => {
     const myDoc = doc(db, "RegisteredDrivers", tel);
 
+    const dimensions = [
+      parseFloat(length),
+      parseFloat(width),
+      parseFloat(height),
+    ];
+    dimensions.sort((a, b) => a - b).reverse();
+
     const docData = {
       name: firstName + " " + lastName,
       dimensions: {
-        length: parseInt(length),
-        width: parseInt(width),
-        height: parseInt(height),
+        length: dimensions[0],
+        width: dimensions[1],
+        height: dimensions[2],
         weight: parseFloat(weight),
       },
       centerAddress: new GeoPoint(
