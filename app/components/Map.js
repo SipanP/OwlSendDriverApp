@@ -60,12 +60,8 @@ const Map = ({ origin, destination }) => {
           title="Pickup"
           description={origin.description}
           identifier="origin"
-        >
-          <Image
-            source={require("../assets/location.png")}
-            style={{ height: 25, width: 25 }}
-          />
-        </Marker>
+          image={require("../assets/location.png")}
+        />
       )}
       {destination?.location && (
         <Marker
@@ -76,12 +72,8 @@ const Map = ({ origin, destination }) => {
           title="Dropoff"
           description={destination.description}
           identifier="destination"
-        >
-          <Image
-            source={require("../assets/destination.png")}
-            style={{ height: 25, width: 25 }}
-          />
-        </Marker>
+          image={require("../assets/destination.png")}
+        />
       )}
       {origin && destination && (
         <MapViewDirections
