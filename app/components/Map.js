@@ -33,7 +33,7 @@ const Map = ({ origin, destination }) => {
   useEffect(() => {
     if (!origin || !destination) return;
     mapRef.current.fitToSuppliedMarkers(["origin", "destination"], {
-      edgePadding: { top: 50, right: 50, bottom: 200, left: 50 },
+      edgePadding: { top: 50, right: 50, bottom: 300, left: 50 },
     });
   }, [origin, destination]);
   return (
