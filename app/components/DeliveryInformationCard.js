@@ -38,6 +38,8 @@ const DeliveryInformationCard = ({
       <View style={styles.leftCol}>
         <Text
           h1
+          numberOfLines={1}
+          adjustsFontSizeToFit
           style={[
             styles.allText,
             isOnRoute ? styles.onRoute : styles.notOnRoute,
