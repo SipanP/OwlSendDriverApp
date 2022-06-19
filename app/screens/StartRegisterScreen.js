@@ -85,6 +85,7 @@ const StartRegisterScreen = ({ navigation, userProfile }) => {
               tel: tel,
             })
           }
+          disabled={!firstName || !lastName || !tel}
         />
       </KeyboardAvoidingView>
     </TouchableWithoutFeedback>

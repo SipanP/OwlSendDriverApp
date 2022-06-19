@@ -289,6 +289,7 @@ const ContinueRegisterScreen = ({ route, userProfile, setUserProfile }) => {
           onPress={register}
           containerStyle={styles.button}
           buttonStyle={styles.buttonStyle}
+          disabled={(!centerAddress && !showNearbyOrders) || !radius}
         />
         <View style={{ height: 100 }} />
       </KeyboardAvoidingView>
