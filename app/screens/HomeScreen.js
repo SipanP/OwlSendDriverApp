@@ -307,13 +307,14 @@ const HomeScreen = ({ navigation, driverProfile }) => {
     if (driverDoc.pickup.type === "Pickup") {
       await updateDoc(userOrder, {
         status: "Delivering",
+        pickupTime: serverTimestamp(),
       });
     } else if (driverDoc.pickup.type === "Handoff") {
       await updateDoc(userOrder, {
         name: driverProfile.firstName + " " + driverProfile.lastName,
         phone: driverProfile.phone,
         vehicle: driverProfile.vehicle,
-        // time: driverDoc.dropoff.arriveBy
+        handoffTime: serverTimestamp(),
       });
     }
   };
@@ -336,7 +337,7 @@ const HomeScreen = ({ navigation, driverProfile }) => {
       const userOrder = doc(db, "UserOrders", driverDoc.userPhone);
       await updateDoc(userOrder, {
         status: "Delivered",
-        time: serverTimestamp(),
+        dropoffTime: serverTimestamp(),
       });
     }
 
