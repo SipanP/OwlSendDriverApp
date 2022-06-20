@@ -1,7 +1,9 @@
+import * as Location from "expo-location";
 import { StatusBar } from "expo-status-bar";
 import {
   deleteDoc,
   doc,
+  GeoPoint,
   increment,
   onSnapshot,
   serverTimestamp,
@@ -33,6 +35,12 @@ import { db } from "../core/Config";
 const TIMEOUT_SECONDS = 300;
 let timeoutTimer = null;
 
+// Intervals for uploading live location when delivering or available
+const DELIVERING_INTERVAL_SECONDS = 10;
+const AVAILABLE_INTERVAL_SECONDS = 60;
+let deliveringLocationInterval = null;
+let availableLocationInterval = null;
+
 // Indicates whether driver has accepted an order but still waiting for other drivers
 let waitingForOtherDrivers = false;
 
@@ -48,7 +56,25 @@ const HomeScreen = ({ navigation, driverProfile }) => {
   const [showModal, setShowModal] = useState(false);
   const [moneyModalVisible, setMoneyModalVisible] = useState(false);
   const [sessionEarned, setSessionEarned] = useState(0.0);
+  const [currentLocation, setCurrentLocation] = useState({
+    latitude: 51.498733, // This is the Geoloaction of Huxley!
+    longitude: -0.179461, // Change to user's current location later on.
+  });
 
+  const getCurrentLocation = async () => {
+    let { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== "granted") {
+      console.log("Permission to access location was denied");
+      return;
+    }
+
+    let location = await Location.getCurrentPositionAsync({
+      accuracy: Location.Accuracy.Balanced,
+    });
+    setCurrentLocation(location.coords);
+  };
+
+  // Disable Android back button to prevent unwanted behaviours
   useEffect(() => {
     const backHandler = BackHandler.addEventListener(
       "hardwareBackPress",
@@ -73,6 +99,7 @@ const HomeScreen = ({ navigation, driverProfile }) => {
         available: true,
       });
     }
+    startAvailableLocationBroadcast();
   };
 
   const makeUnavailable = async () => {
@@ -82,6 +109,7 @@ const HomeScreen = ({ navigation, driverProfile }) => {
         available: false,
       });
     }
+    stopAvailableLocationBroadcast();
   };
 
   const goOnline = async () => {
@@ -101,8 +129,59 @@ const HomeScreen = ({ navigation, driverProfile }) => {
     makeUnavailable();
   };
 
+  const startDeliveringLocationBroadcast = async () => {
+    if (!deliveringLocationInterval) {
+      const userOrder = doc(db, "UserOrders", driverDoc.userPhone);
+      deliveringLocationInterval = setInterval(async () => {
+        getCurrentLocation();
+
+        await updateDoc(userOrder, {
+          "driver.location": new GeoPoint(
+            currentLocation.latitude,
+            currentLocation.longitude
+          ),
+        });
+      }, DELIVERING_INTERVAL_SECONDS * 1000);
+    }
+  };
+
+  const stopDeliveringLocationBroadcast = () => {
+    clearInterval(deliveringLocationInterval);
+    deliveringLocationInterval = null;
+  };
+
+  const startAvailableLocationBroadcast = async () => {
+    if (!availableLocationInterval) {
+      availableLocationInterval = 1;
+      getCurrentLocation();
+      await updateDoc(registeredDrivers, {
+        location: new GeoPoint(
+          currentLocation.latitude,
+          currentLocation.longitude
+        ),
+      });
+
+      availableLocationInterval = setInterval(async () => {
+        getCurrentLocation();
+        await updateDoc(registeredDrivers, {
+          location: new GeoPoint(
+            currentLocation.latitude,
+            currentLocation.longitude
+          ),
+        });
+      }, AVAILABLE_INTERVAL_SECONDS * 1000);
+    }
+  };
+
+  const stopAvailableLocationBroadcast = () => {
+    clearInterval(availableLocationInterval);
+    availableLocationInterval = null;
+  };
+
   useEffect(() => {
     // console.log(driverProfile);
+
+    getCurrentLocation();
 
     return onSnapshot(driverOrders, (doc) => {
       setDriverDoc(doc.data());
@@ -126,6 +205,8 @@ const HomeScreen = ({ navigation, driverProfile }) => {
         driverDoc.status === "pickup" ||
         driverDoc.status === "dropoff")
     ) {
+      makeUnavailable();
+
       setOrigin({
         location: {
           lat: driverDoc.pickup.location.latitude,
@@ -155,8 +236,10 @@ const HomeScreen = ({ navigation, driverProfile }) => {
         setPickup(true);
         clearTimeout(timeoutTimer);
         waitingForOtherDrivers = false;
+
+        // Start broadcasting live location to user
+        startDeliveringLocationBroadcast();
       }
-      makeUnavailable();
 
       if (driverDoc.status === "pending") {
         timeoutTimer = setTimeout(async () => {
@@ -170,8 +253,9 @@ const HomeScreen = ({ navigation, driverProfile }) => {
           }
         }, TIMEOUT_SECONDS * 1000);
       }
-    } else if (!driverDoc && showModal) {
+    } else if (!driverDoc && online) {
       clearTimeout(timeoutTimer);
+      stopDeliveringLocationBroadcast();
       hideModal();
 
       // If driver already accepted order issue apology
@@ -244,6 +328,9 @@ const HomeScreen = ({ navigation, driverProfile }) => {
       useNativeDriver: false,
     }).start();
 
+    // Stop broadcasting live location to user
+    stopDeliveringLocationBroadcast();
+
     // Update user order on firebase to notify user delivered when type is Deliver
     if (driverDoc.dropoff.type === "Deliver") {
       const userOrder = doc(db, "UserOrders", driverDoc.userPhone);
@@ -274,7 +361,12 @@ const HomeScreen = ({ navigation, driverProfile }) => {
   return (
     <View style={styles.container}>
       <StatusBar style="dark" />
-      <Map style={{ flex: 1 }} origin={origin} destination={destination} />
+      <Map
+        style={{ flex: 1 }}
+        origin={origin}
+        destination={destination}
+        currentLocation={currentLocation}
+      />
       <View style={styles.sessionEarned}>
         <Text style={{ fontWeight: "700" }}>SESSION</Text>
         <Text style={{ fontSize: 26, fontWeight: "700" }}>
