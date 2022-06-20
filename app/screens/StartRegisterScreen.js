@@ -44,9 +44,13 @@ const StartRegisterScreen = ({ navigation, driverProfile }) => {
       >
         <Image
           source={require("../assets/owl-send-logo-transparent-bg.png")}
-          style={{ width: "100%", height: 170 }}
+          style={{
+            width: "100%",
+            height: 170,
+            resizeMode: "contain",
+          }}
         />
-        <Text h4 style={{ marginTop: 20, marginBottom: 10, fontWeight: "700" }}>
+        <Text h4 style={{ marginTop: 0, marginBottom: 10, fontWeight: "700" }}>
           Create a driver account
         </Text>
         <View style={styles.inputContainer}>
