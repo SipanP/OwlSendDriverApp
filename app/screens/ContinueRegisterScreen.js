@@ -11,6 +11,8 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   BackHandler,
+  ScrollView,
+  LogBox,
 } from "react-native";
 import {
   Button,
@@ -23,6 +25,15 @@ import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplet
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import Colors from "../core/Colors";
 import { db } from "../core/Config";
+
+/** Ignore the following error:
+ * VirtualizedLists should never be nested inside plain ScrollViews with the same orientation because
+ * it can break windowing and other functionality - use another VirtualizedList-backed container instead.
+ *
+ * There is a bug in GooglePlacesAutcomplete
+ */
+
+LogBox.ignoreLogs(["VirtualizedLists should never be nested"]);
 
 const ContinueRegisterScreen = ({ route, driverProfile, setDriverProfile }) => {
   const { firstName, lastName, tel } = route.params;
@@ -169,171 +180,183 @@ const ContinueRegisterScreen = ({ route, driverProfile, setDriverProfile }) => {
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.container}
+        keyboardShouldPersistTaps="handled"
       >
-        <StatusBar style="light" />
+        <ScrollView
+          keyboardShouldPersistTaps="handled"
+          listViewDisplayed={false}
+          contentContainerStyle={{
+            alignItems: "center",
+            justifyContent: "center",
+            flexGrow: 1,
+            flexDirection: "column",
+          }}
+        >
+          <StatusBar style="light" />
 
-        <View style={styles.inputContainter}>
-          <Text style={{ color: "grey", marginLeft: 10 }}>
-            What type of vehicle will you use for deliveries?
-          </Text>
-          <ButtonGroup
-            buttons={["Bicycle", "Moped", "Car / Van"]}
-            selectedIndex={selectedVehicle}
-            onPress={(value) => {
-              setSelectedVehicle(value);
-            }}
-            containerStyle={styles.vehicleSelect}
-            selectedButtonStyle={{
-              backgroundColor: Colors.primary,
-              borderColor: Colors.primary,
-            }}
-          />
-          <Text style={{ color: "grey", marginLeft: 10 }}>
-            In what area are you willing to deliver?
-          </Text>
-
-          <View style={{ width: "100%" }}>
-            <GooglePlacesAutocomplete
-              ref={ref}
-              styles={styles.inputStyles}
-              enablePoweredByContainer={false}
-              onPress={(data, details = null) => {
-                setCenterAddress({
-                  location: {
-                    latitude: details.geometry.location.lat,
-                    longitude: details.geometry.location.lng,
-                  },
-                  address: data.description,
-                });
+          <View style={styles.inputContainter}>
+            <Text style={{ color: "grey", marginLeft: 10 }}>
+              What type of vehicle will you use for deliveries?
+            </Text>
+            <ButtonGroup
+              buttons={["Bicycle", "Moped", "Car / Van"]}
+              selectedIndex={selectedVehicle}
+              onPress={(value) => {
+                setSelectedVehicle(value);
               }}
-              fetchDetails={true}
-              returnKeyType={"search"}
-              placeholder="Centre Address"
-              nearbyPlacesAPI="GooglePlacesSearch"
-              debounce={400}
-              query={{
-                key: "AIzaSyCE2Ct-iHuI_2nNALaRghtfpNBj1gPhfcY",
-                language: "en",
+              containerStyle={styles.vehicleSelect}
+              selectedButtonStyle={{
+                backgroundColor: Colors.primary,
+                borderColor: Colors.primary,
               }}
             />
-            <View style={{ position: "absolute", right: 30, top: 15 }}>
-              <TouchableOpacity
-                onPress={() => {
-                  getCurrentLocation();
+            <Text style={{ color: "grey", marginLeft: 10 }}>
+              In what area are you willing to deliver?
+            </Text>
+
+            <View style={{ width: "100%" }}>
+              <GooglePlacesAutocomplete
+                ref={ref}
+                styles={styles.inputStyles}
+                enablePoweredByContainer={false}
+                onPress={(data, details = null) => {
+                  setCenterAddress({
+                    location: {
+                      latitude: details.geometry.location.lat,
+                      longitude: details.geometry.location.lng,
+                    },
+                    address: data.description,
+                  });
                 }}
-              >
-                <FontAwesome
-                  name="location-arrow"
-                  size={35}
-                  color={Colors.primary}
-                />
-              </TouchableOpacity>
+                fetchDetails={true}
+                returnKeyType={"search"}
+                placeholder="Centre Address"
+                nearbyPlacesAPI="GooglePlacesSearch"
+                debounce={400}
+                query={{
+                  key: "AIzaSyCE2Ct-iHuI_2nNALaRghtfpNBj1gPhfcY",
+                  language: "en",
+                }}
+              />
+              <View style={{ position: "absolute", right: 30, top: 15 }}>
+                <TouchableOpacity
+                  onPress={() => {
+                    getCurrentLocation();
+                  }}
+                >
+                  <FontAwesome
+                    name="location-arrow"
+                    size={35}
+                    color={Colors.primary}
+                  />
+                </TouchableOpacity>
+              </View>
+            </View>
+            <View
+              style={{ flexDirection: "row", justifyContent: "space-between" }}
+            >
+              <CheckBox
+                containerStyle={{
+                  width: "50%",
+                  backgroundColor: "rgba(106, 90, 205, 0.0)",
+                  borderColor: "rgba(106, 90, 205, 0.0)",
+                  paddingLeft: 10,
+                  paddingRight: 5,
+                  marginLeft: 0,
+                  marginRight: 0,
+                }}
+                textStyle={{ fontWeight: "500" }}
+                checkedColor={Colors.primary}
+                title="Show Nearby Orders"
+                checked={showNearbyOrders}
+                onPress={() => {
+                  setShowNearbyOrders(!showNearbyOrders);
+                }}
+              />
+              <Input
+                containerStyle={{
+                  width: "45%",
+                  marginTop: 5,
+                }}
+                placeholder="Radius (mi)"
+                keyboardType="numeric"
+                value={radius}
+                onChangeText={(text) => {
+                  setRadius(text);
+                  setInvalidRadius(isNaN(text));
+                }}
+                style={styles.sizeField}
+                errorMessage={invalidRadius && "Invalid number"}
+              />
+            </View>
+            <Text style={{ color: "grey", marginLeft: 10 }}>
+              Maximum package dimension allowed for your vehicle (Optional)
+            </Text>
+            <View style={{ width: "25%", flexDirection: "row" }}>
+              <Input
+                placeholder="Length (cm)"
+                keyboardType="numeric"
+                value={length}
+                onChangeText={(text) => {
+                  setLength(text);
+                  setInvalidLength(isNaN(text));
+                }}
+                style={styles.sizeField}
+                errorMessage={invalidLength && "Invalid"}
+              />
+              <Input
+                placeholder="Width (cm)"
+                keyboardType="numeric"
+                value={width}
+                onChangeText={(text) => {
+                  setWidth(text);
+                  setInvalidWidth(isNaN(text));
+                }}
+                style={styles.sizeField}
+                errorMessage={invalidWidth && "Invalid"}
+              />
+              <Input
+                placeholder="Height (cm)"
+                keyboardType="numeric"
+                value={height}
+                onChangeText={(text) => {
+                  setHeight(text);
+                  setInvalidHeight(isNaN(text));
+                }}
+                style={styles.sizeField}
+                errorMessage={invalidHeight && "Invalid"}
+              />
+              <Input
+                placeholder="Weight (kg)"
+                keyboardType="numeric"
+                value={weight}
+                onChangeText={(text) => {
+                  setWeight(text);
+                  setInvalidWeight(isNaN(text));
+                }}
+                style={styles.sizeField}
+                errorMessage={invalidWeight && "Invalid"}
+              />
             </View>
           </View>
-          <View
-            style={{ flexDirection: "row", justifyContent: "space-between" }}
-          >
-            <CheckBox
-              containerStyle={{
-                width: "50%",
-                backgroundColor: "rgba(106, 90, 205, 0.0)",
-                borderColor: "rgba(106, 90, 205, 0.0)",
-                paddingLeft: 10,
-                paddingRight: 5,
-                marginLeft: 0,
-                marginRight: 0,
-              }}
-              textStyle={{ fontWeight: "500" }}
-              checkedColor={Colors.primary}
-              title="Show Nearby Orders"
-              checked={showNearbyOrders}
-              onPress={() => {
-                setShowNearbyOrders(!showNearbyOrders);
-              }}
-            />
-            <Input
-              containerStyle={{
-                width: "45%",
-                marginTop: 5,
-              }}
-              placeholder="Radius (mi)"
-              keyboardType="numeric"
-              value={radius}
-              onChangeText={(text) => {
-                setRadius(text);
-                setInvalidRadius(isNaN(text));
-              }}
-              style={styles.sizeField}
-              errorMessage={invalidRadius && "Invalid number"}
-            />
-          </View>
-          <Text style={{ color: "grey", marginLeft: 10 }}>
-            Maximum package dimension allowed for your vehicle (Optional)
-          </Text>
-          <View style={{ width: "25%", flexDirection: "row" }}>
-            <Input
-              placeholder="Length (cm)"
-              keyboardType="numeric"
-              value={length}
-              onChangeText={(text) => {
-                setLength(text);
-                setInvalidLength(isNaN(text));
-              }}
-              style={styles.sizeField}
-              errorMessage={invalidLength && "Invalid"}
-            />
-            <Input
-              placeholder="Width (cm)"
-              keyboardType="numeric"
-              value={width}
-              onChangeText={(text) => {
-                setWidth(text);
-                setInvalidWidth(isNaN(text));
-              }}
-              style={styles.sizeField}
-              errorMessage={invalidWidth && "Invalid"}
-            />
-            <Input
-              placeholder="Height (cm)"
-              keyboardType="numeric"
-              value={height}
-              onChangeText={(text) => {
-                setHeight(text);
-                setInvalidHeight(isNaN(text));
-              }}
-              style={styles.sizeField}
-              errorMessage={invalidHeight && "Invalid"}
-            />
-            <Input
-              placeholder="Weight (kg)"
-              keyboardType="numeric"
-              value={weight}
-              onChangeText={(text) => {
-                setWeight(text);
-                setInvalidWeight(isNaN(text));
-              }}
-              style={styles.sizeField}
-              errorMessage={invalidWeight && "Invalid"}
-            />
-          </View>
-        </View>
-        <Button
-          title="Register"
-          raised
-          onPress={register}
-          containerStyle={styles.button}
-          buttonStyle={styles.buttonStyle}
-          disabled={
-            (!centerAddress && !showNearbyOrders) ||
-            !radius ||
-            invalidLength ||
-            invalidWidth ||
-            invalidHeight ||
-            invalidWeight ||
-            invalidRadius
-          }
-        />
-        <View style={{ height: 100 }} />
+          <Button
+            title="Register"
+            raised
+            onPress={register}
+            containerStyle={styles.button}
+            buttonStyle={styles.buttonStyle}
+            disabled={
+              (!centerAddress && !showNearbyOrders) ||
+              !radius ||
+              invalidLength ||
+              invalidWidth ||
+              invalidHeight ||
+              invalidWeight ||
+              invalidRadius
+            }
+          />
+          <View style={{ height: 100 }} />
+        </ScrollView>
       </KeyboardAvoidingView>
     </TouchableWithoutFeedback>
   );
