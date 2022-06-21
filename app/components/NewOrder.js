@@ -56,21 +56,36 @@ const NewOrder = ({ driverDoc, hideModal, acceptOrder, pickedUp, arrived }) => {
           <Text
             numberOfLines={1}
             adjustsFontSizeToFit
-            style={{ width: "30%", color: "white", fontSize: 40 }}
+            style={{
+              width: "30%",
+              color: "white",
+              fontSize: 40,
+              textAlign: "right",
+            }}
           >
             {driverDoc?.minutes} min
           </Text>
           <Text
             numberOfLines={1}
             adjustsFontSizeToFit
-            style={{ width: "30%", color: "white", fontSize: 40 }}
+            style={{
+              width: "30%",
+              color: "white",
+              fontSize: 40,
+              textAlign: "right",
+            }}
           >
             {driverDoc?.distance} mi
           </Text>
           <Text
             numberOfLines={1}
             adjustsFontSizeToFit
-            style={{ width: "38%", color: "white", fontSize: 40 }}
+            style={{
+              width: "38%",
+              color: "white",
+              fontSize: 40,
+              textAlign: "right",
+            }}
           >
             {formatter.format(driverDoc?.price)}
           </Text>
@@ -140,10 +155,10 @@ const NewOrder = ({ driverDoc, hideModal, acceptOrder, pickedUp, arrived }) => {
               marginTop: 5,
             }}
           >
-            <Text style={{ color: "white", fontSize: 25 }}>
+            <Text style={{ color: "white", fontSize: 30 }}>
               Arrive by: 09:37
             </Text>
-            <Text style={{ color: "white", fontSize: 25 }}>In 10 mins</Text>
+            <Text style={{ color: "white", fontSize: 30 }}>In 10 mins</Text>
           </View>
           <TouchableOpacity
             style={[styles.button, styles.pickedUpButton]}
@@ -166,10 +181,10 @@ const NewOrder = ({ driverDoc, hideModal, acceptOrder, pickedUp, arrived }) => {
               marginTop: 5,
             }}
           >
-            <Text style={{ color: "white", fontSize: 25 }}>
+            <Text style={{ color: "white", fontSize: 30 }}>
               Arrive by: 09:37
             </Text>
-            <Text style={{ color: "white", fontSize: 25 }}>In 10 mins</Text>
+            <Text style={{ color: "white", fontSize: 30 }}>In 10 mins</Text>
           </View>
           <TouchableOpacity
             style={[

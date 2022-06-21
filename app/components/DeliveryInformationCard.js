@@ -32,7 +32,7 @@ const DeliveryInformationCard = ({
           ? [styles.onRoute, { borderColor: "white", borderWidth: 1 }]
           : [styles.notOnRoute, { borderColor: "black", borderWidth: 1 }],
         styles.boxWithShadow,
-        fullInfo ? { height: "30%" } : {},
+        fullInfo ? { height: "28%" } : {},
       ]}
     >
       <View style={styles.leftCol}>
@@ -84,6 +84,7 @@ const DeliveryInformationCard = ({
             style={[
               styles.allText,
               isOnRoute ? styles.onRoute : styles.notOnRoute,
+              { flex: 1 },
             ]}
           >
             {address}
