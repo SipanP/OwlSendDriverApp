@@ -52,7 +52,6 @@ const HomeScreen = ({ navigation, driverProfile }) => {
   const [driverDoc, setDriverDoc] = useState(null);
   const [origin, setOrigin] = useState(null);
   const [destination, setDestination] = useState(null);
-  const [pickup, setPickup] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [moneyModalVisible, setMoneyModalVisible] = useState(false);
   const [sessionEarned, setSessionEarned] = useState(0.0);
@@ -233,7 +232,6 @@ const HomeScreen = ({ navigation, driverProfile }) => {
       }).start();
 
       if (driverDoc.status === "pickup" || driverDoc.status === "dropoff") {
-        setPickup(true);
         clearTimeout(timeoutTimer);
         waitingForOtherDrivers = false;
 
@@ -353,7 +351,6 @@ const HomeScreen = ({ navigation, driverProfile }) => {
       await deleteDoc(driverOrders);
       makeAvailable();
     }, 4000);
-    setPickup(false);
     setShowModal(false);
     setOrigin(null);
     setDestination(null);
@@ -422,7 +419,8 @@ const HomeScreen = ({ navigation, driverProfile }) => {
             transform: [{ translateY: slideAnim }],
             position: "absolute",
           },
-          pickup ? { height: "45%" } : {},
+          (driverDoc?.status === "pickup" ||
+            driverDoc?.status === "dropoff") && { height: "45%" },
         ]}
       >
         <NewOrder

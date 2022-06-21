@@ -51,6 +51,7 @@ const NewOrder = ({ driverDoc, hideModal, acceptOrder, pickedUp, arrived }) => {
             alignItems: "center",
             marginTop: 10,
             marginBottom: 5,
+            paddingHorizontal: 10,
           }}
         >
           <Text
@@ -73,6 +74,7 @@ const NewOrder = ({ driverDoc, hideModal, acceptOrder, pickedUp, arrived }) => {
               color: "white",
               fontSize: 40,
               textAlign: "right",
+              paddingLeft: 5,
             }}
           >
             {driverDoc?.distance} mi
@@ -85,6 +87,7 @@ const NewOrder = ({ driverDoc, hideModal, acceptOrder, pickedUp, arrived }) => {
               color: "white",
               fontSize: 40,
               textAlign: "right",
+              paddingLeft: 10,
             }}
           >
             {formatter.format(driverDoc?.price)}
@@ -153,12 +156,15 @@ const NewOrder = ({ driverDoc, hideModal, acceptOrder, pickedUp, arrived }) => {
               justifyContent: "space-evenly",
               width: "100%",
               marginTop: 5,
+              paddingHorizontal: 10,
             }}
           >
             <Text style={{ color: "white", fontSize: 30 }}>
               Arrive by: 09:37
             </Text>
-            <Text style={{ color: "white", fontSize: 30 }}>In 10 mins</Text>
+            <Text style={{ color: "white", fontSize: 30, paddingLeft: 10 }}>
+              In 10 mins
+            </Text>
           </View>
           <TouchableOpacity
             style={[styles.button, styles.pickedUpButton]}
@@ -179,12 +185,15 @@ const NewOrder = ({ driverDoc, hideModal, acceptOrder, pickedUp, arrived }) => {
               justifyContent: "space-evenly",
               width: "100%",
               marginTop: 5,
+              paddingHorizontal: 10,
             }}
           >
             <Text style={{ color: "white", fontSize: 30 }}>
               Arrive by: 09:37
             </Text>
-            <Text style={{ color: "white", fontSize: 30 }}>In 10 mins</Text>
+            <Text style={{ color: "white", fontSize: 30, paddingLeft: 10 }}>
+              In 100 mins
+            </Text>
           </View>
           <TouchableOpacity
             style={[
