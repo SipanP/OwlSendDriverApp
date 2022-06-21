@@ -4,7 +4,7 @@ import MapView, { Marker } from "react-native-maps";
 import MapViewDirections from "react-native-maps-directions";
 import Colors from "../core/Colors";
 
-const Map = ({ origin, destination, currentLocation }) => {
+const Map = ({ origin, destination, currentLocation, driverDoc }) => {
   const mapRef = useRef(null);
 
   useEffect(() => {
@@ -53,7 +53,7 @@ const Map = ({ origin, destination, currentLocation }) => {
         >
           <Image
             source={require("../assets/location.png")}
-            style={{ height: 25, width: 25 }}
+            style={{ height: 30, width: 30 }}
           />
         </Marker>
       )}
@@ -69,15 +69,58 @@ const Map = ({ origin, destination, currentLocation }) => {
         >
           <Image
             source={require("../assets/destination.png")}
-            style={{ height: 25, width: 25 }}
+            style={{ height: 30, width: 30 }}
           />
         </Marker>
       )}
-      {origin && destination && (
+      {origin &&
+        destination &&
+        (driverDoc?.status === "pending" ||
+          driverDoc?.status === "accepted") && (
+          <MapViewDirections
+            origin={{
+              latitude: origin.location.lat,
+              longitude: origin.location.lng,
+            }}
+            destination={{
+              latitude: destination.location.lat,
+              longitude: destination.location.lng,
+            }}
+            apikey="AIzaSyCE2Ct-iHuI_2nNALaRghtfpNBj1gPhfcY"
+            strokeWidth={3}
+            strokeColor={
+              driverDoc.dropoff.type === "Deliver"
+                ? Colors.primary
+                : Colors.secondary
+            }
+          />
+        )}
+      {origin &&
+        destination &&
+        (driverDoc?.status === "pending" || driverDoc?.status === "pickup") && (
+          <MapViewDirections
+            origin={{
+              latitude: currentLocation.latitude,
+              longitude: currentLocation.longitude,
+            }}
+            destination={{
+              latitude: origin.location.lat,
+              longitude: origin.location.lng,
+            }}
+            apikey="AIzaSyCE2Ct-iHuI_2nNALaRghtfpNBj1gPhfcY"
+            strokeWidth={3}
+            strokeColor={
+              driverDoc?.pickup.type === "Pickup"
+                ? Colors.dark
+                : Colors.secondary
+            }
+          />
+        )}
+      {origin && destination && driverDoc?.status === "dropoff" && (
         <MapViewDirections
           origin={{
-            latitude: origin.location.lat,
-            longitude: origin.location.lng,
+            latitude: currentLocation.latitude,
+            longitude: currentLocation.longitude,
           }}
           destination={{
             latitude: destination.location.lat,
@@ -85,7 +128,11 @@ const Map = ({ origin, destination, currentLocation }) => {
           }}
           apikey="AIzaSyCE2Ct-iHuI_2nNALaRghtfpNBj1gPhfcY"
           strokeWidth={3}
-          strokeColor={Colors.primary}
+          strokeColor={
+            driverDoc?.dropoff.type === "Deliver"
+              ? Colors.primary
+              : Colors.secondary
+          }
         />
       )}
     </MapView>

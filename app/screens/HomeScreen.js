@@ -367,6 +367,7 @@ const HomeScreen = ({ navigation, driverProfile }) => {
         origin={origin}
         destination={destination}
         currentLocation={currentLocation}
+        driverDoc={driverDoc}
       />
       <View style={styles.sessionEarned}>
         <Text style={{ fontWeight: "700" }}>SESSION</Text>
