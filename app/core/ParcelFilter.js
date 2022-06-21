@@ -77,27 +77,26 @@ const distanceAcceptable = async (
     dropoff
   );
 
-  return 0 <= distToPickup &&
+  return (
+    0 <= distToPickup &&
     distToPickup <= driverProfile.radius &&
     0 <= distToDest &&
     distToDest <= driverProfile.radius
-    ? { distToPickup, minsToPickup }
-    : {};
+  );
 };
 
 export const canTakeParcel = async (
-  driverOrder,
+  driverDoc,
   driverProfile,
   currentLocation
 ) => {
-  journeyToPickup = await distanceAcceptable(
-    driverProfile,
-    currentLocation,
-    driverOrder.pickup.location,
-    driverOrder.dropoff.location
+  return (
+    dimensionsAcceptable(driverDoc.dimensions, driverProfile) &&
+    (await distanceAcceptable(
+      driverProfile,
+      currentLocation,
+      driverDoc.pickup.location,
+      driverDoc.dropoff.location
+    ))
   );
-
-  return dimensionsAcceptable(driverOrder.dimensions, driverProfile)
-    ? journeyToPickup
-    : {};
 };

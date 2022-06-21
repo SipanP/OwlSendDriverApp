@@ -30,7 +30,7 @@ import NewOrder from "../components/NewOrder";
 import StopButton from "../components/StopButton";
 import Colors from "../core/Colors";
 import { db } from "../core/Config";
-import { canTakeParcel } from "../core/ParcelFilter.js";
+import { canTakeParcel, getDistance } from "../core/ParcelFilter.js";
 
 // Number of seconds before driver deletes driver order yet to be confirmed by user in case the user crashed
 const TIMEOUT_SECONDS = 300;
@@ -238,14 +238,9 @@ const HomeScreen = ({ navigation, driverProfile }) => {
   const filterParcel = async () => {
     await getCurrentLocation();
 
-    let { distToPickup, minsToPickup } = await canTakeParcel(
-      driverDoc,
-      driverProfile,
-      currentLocation
-    );
-
     if (
-      (driverDoc.status === "pending" && !isNaN(distToPickup)) ||
+      (driverDoc.status === "pending" &&
+        (await canTakeParcel(driverDoc, driverProfile, currentLocation))) ||
       driverDoc.status === "accepted"
     ) {
       makeUnavailable();
@@ -265,8 +260,12 @@ const HomeScreen = ({ navigation, driverProfile }) => {
         description: driverDoc.dropoff.postcode,
       });
 
-      setDistToPickup(distToPickup);
-      setMinsToPickup(minsToPickup);
+      const { dist, mins } = await getDistance(
+        currentLocation,
+        driverDoc.pickup.location
+      );
+      setDistToPickup(dist);
+      setMinsToPickup(mins);
 
       setShowModal(true);
 
