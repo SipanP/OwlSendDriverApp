@@ -137,12 +137,11 @@ const ContinueRegisterScreen = ({ route, driverProfile, setDriverProfile }) => {
         centerAddress ? centerAddress.location.longitude : null
       ),
       radius: parseFloat(radius),
-      showNearbyOrders: showNearbyOrders,
+      showNearbyOrders: showNearbyOrders ? true : false,
       vehicle: selectedVehicle,
       online: false,
       available: false,
       sessionEarned: 0.0,
-      // currentLocation:
     };
 
     await setDoc(myDoc, docData);
