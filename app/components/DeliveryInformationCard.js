@@ -64,6 +64,7 @@ const DeliveryInformationCard = ({
       </View>
       <View style={styles.rightCol}>
         <Text
+          adjustsFontSizeToFit
           style={[
             styles.allText,
             isOnRoute ? styles.onRoute : styles.notOnRoute,
