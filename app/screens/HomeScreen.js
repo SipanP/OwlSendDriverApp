@@ -98,7 +98,9 @@ const HomeScreen = ({ navigation, driverProfile }) => {
         available: true,
       });
     }
-    startAvailableLocationBroadcast();
+    if (driverProfile?.showNearbyOrders) {
+      startAvailableLocationBroadcast();
+    }
   };
 
   const makeUnavailable = async () => {
@@ -261,6 +263,8 @@ const HomeScreen = ({ navigation, driverProfile }) => {
         Alert.alert("Sorry, unable to find other drivers to handoff.");
         waitingForOtherDrivers = false;
       }
+    } else if (!online) {
+      makeUnavailable();
     }
   }, [driverDoc, online]);
 
