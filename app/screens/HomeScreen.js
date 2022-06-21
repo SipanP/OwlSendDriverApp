@@ -30,6 +30,7 @@ import NewOrder from "../components/NewOrder";
 import StopButton from "../components/StopButton";
 import Colors from "../core/Colors";
 import { db } from "../core/Config";
+import { canTakeParcel } from "../core/ParcelFilter.js";
 
 // Number of seconds before driver deletes driver order yet to be confirmed by user in case the user crashed
 const TIMEOUT_SECONDS = 300;
@@ -59,6 +60,8 @@ const HomeScreen = ({ navigation, driverProfile }) => {
     latitude: 51.498733, // This is the Geoloaction of Huxley!
     longitude: -0.179461, // Change to user's current location later on.
   });
+  const [distToPickup, setDistToPickup] = useState(0);
+  const [minsToPickup, setMinsToPickup] = useState(0);
 
   const getCurrentLocation = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync();
@@ -98,9 +101,7 @@ const HomeScreen = ({ navigation, driverProfile }) => {
         available: true,
       });
     }
-    if (driverProfile?.showNearbyOrders) {
-      startAvailableLocationBroadcast();
-    }
+    // startAvailableLocationBroadcast();
   };
 
   const makeUnavailable = async () => {
@@ -110,7 +111,7 @@ const HomeScreen = ({ navigation, driverProfile }) => {
         available: false,
       });
     }
-    stopAvailableLocationBroadcast();
+    // stopAvailableLocationBroadcast();
   };
 
   const goOnline = async () => {
@@ -201,10 +202,51 @@ const HomeScreen = ({ navigation, driverProfile }) => {
     if (
       driverDoc &&
       online &&
-      (driverDoc.status === "pending" ||
-        driverDoc.status === "accepted" ||
-        driverDoc.status === "pickup" ||
-        driverDoc.status === "dropoff")
+      (driverDoc.status === "pending" || driverDoc.status === "accepted")
+    ) {
+      // Filter parcel by dimensions and delivery radius
+      filterParcel();
+    } else if (
+      driverDoc &&
+      online &&
+      (driverDoc.status === "pickup" || driverDoc.status === "dropoff")
+    ) {
+      makeUnavailable();
+      clearTimeout(timeoutTimer);
+      timeoutTimer = null;
+      waitingForOtherDrivers = false;
+
+      // Start broadcasting live location to user
+      startDeliveringLocationBroadcast();
+    } else if (!driverDoc && online) {
+      clearTimeout(timeoutTimer);
+      timeoutTimer = null;
+      stopDeliveringLocationBroadcast();
+      hideModal();
+
+      // If driver already accepted order issue apology
+      if (waitingForOtherDrivers) {
+        Alert.alert("Sorry, unable to find other drivers to handoff.");
+        waitingForOtherDrivers = false;
+      }
+    } else if (!online) {
+      makeUnavailable();
+    }
+  }, [driverDoc, online]);
+
+  // Filter parcel by dimensions and delivery radius
+  const filterParcel = async () => {
+    await getCurrentLocation();
+
+    let { distToPickup, minsToPickup } = await canTakeParcel(
+      driverDoc,
+      driverProfile,
+      currentLocation
+    );
+
+    if (
+      (driverDoc.status === "pending" && !isNaN(distToPickup)) ||
+      driverDoc.status === "accepted"
     ) {
       makeUnavailable();
 
@@ -223,6 +265,9 @@ const HomeScreen = ({ navigation, driverProfile }) => {
         description: driverDoc.dropoff.postcode,
       });
 
+      setDistToPickup(distToPickup);
+      setMinsToPickup(minsToPickup);
+
       setShowModal(true);
 
       Animated.spring(slideAnim, {
@@ -233,15 +278,7 @@ const HomeScreen = ({ navigation, driverProfile }) => {
         useNativeDriver: false,
       }).start();
 
-      if (driverDoc.status === "pickup" || driverDoc.status === "dropoff") {
-        clearTimeout(timeoutTimer);
-        waitingForOtherDrivers = false;
-
-        // Start broadcasting live location to user
-        startDeliveringLocationBroadcast();
-      }
-
-      if (driverDoc.status === "pending") {
+      if (!timeoutTimer) {
         timeoutTimer = setTimeout(async () => {
           // Delete driver order once timeout
           await deleteDoc(driverOrders);
@@ -253,20 +290,13 @@ const HomeScreen = ({ navigation, driverProfile }) => {
           }
         }, TIMEOUT_SECONDS * 1000);
       }
-    } else if (!driverDoc && online) {
-      clearTimeout(timeoutTimer);
-      stopDeliveringLocationBroadcast();
-      hideModal();
-
-      // If driver already accepted order issue apology
-      if (waitingForOtherDrivers) {
-        Alert.alert("Sorry, unable to find other drivers to handoff.");
-        waitingForOtherDrivers = false;
-      }
-    } else if (!online) {
-      makeUnavailable();
+    } else {
+      // Decline order if not eligible
+      await updateDoc(driverOrders, {
+        status: "declined",
+      });
     }
-  }, [driverDoc, online]);
+  };
 
   // slideAnim will be used as the value for position. Initial Value: 100
   const slideAnim = useRef(new Animated.Value(600)).current;
@@ -434,6 +464,8 @@ const HomeScreen = ({ navigation, driverProfile }) => {
           style={styles.modal}
           pickedUp={pickedUp}
           arrived={arrived}
+          distToPickup={distToPickup}
+          minsToPickup={minsToPickup}
         />
       </Animated.View>
     </View>

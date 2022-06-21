@@ -6,7 +6,15 @@ import { TouchableOpacity } from "react-native";
 import "intl";
 import "intl/locale-data/jsonp/en";
 
-const NewOrder = ({ driverDoc, hideModal, acceptOrder, pickedUp, arrived }) => {
+const NewOrder = ({
+  driverDoc,
+  hideModal,
+  acceptOrder,
+  pickedUp,
+  arrived,
+  distToPickup,
+  minsToPickup,
+}) => {
   var formatter = new Intl.NumberFormat("en-UK", {
     style: "currency",
     currency: "GBP",
@@ -64,7 +72,7 @@ const NewOrder = ({ driverDoc, hideModal, acceptOrder, pickedUp, arrived }) => {
               textAlign: "right",
             }}
           >
-            {driverDoc?.minutes} min
+            {driverDoc?.minutes + minsToPickup} min
           </Text>
           <Text
             numberOfLines={1}
@@ -77,7 +85,7 @@ const NewOrder = ({ driverDoc, hideModal, acceptOrder, pickedUp, arrived }) => {
               paddingLeft: 5,
             }}
           >
-            {driverDoc?.distance} mi
+            {driverDoc?.distance + distToPickup} mi
           </Text>
           <Text
             numberOfLines={1}
