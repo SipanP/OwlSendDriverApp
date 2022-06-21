@@ -63,33 +63,39 @@ const DeliveryInformationCard = ({
         )}
       </View>
       <View style={styles.rightCol}>
-        <Text
-          adjustsFontSizeToFit
-          style={[
-            styles.allText,
-            isOnRoute ? styles.onRoute : styles.notOnRoute,
-          ]}
-        >
-          {fullInfo && (
-            <Text
-              h4
-              style={[
-                styles.allText,
-                isOnRoute ? styles.onRoute : styles.notOnRoute,
-              ]}
-            >
-              {name} {"\n"}
-            </Text>
-          )}
-          {fullInfo && address}
-          {!fullInfo && (
-            <Text style={{ fontSize: 20 }}>
-              {address?.includes(",")
-                ? address?.slice(address?.indexOf(",") + 2, address.length)
-                : address}
-            </Text>
-          )}
-        </Text>
+        {fullInfo && (
+          <Text
+            h4
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            style={[
+              styles.allText,
+              isOnRoute ? styles.onRoute : styles.notOnRoute,
+              { fontWeight: "500" },
+            ]}
+          >
+            {name}
+          </Text>
+        )}
+        {fullInfo && (
+          <Text
+            numberOfLines={5}
+            adjustsFontSizeToFit
+            style={[
+              styles.allText,
+              isOnRoute ? styles.onRoute : styles.notOnRoute,
+            ]}
+          >
+            {address}
+          </Text>
+        )}
+        {!fullInfo && (
+          <Text numberOfLines={3} adjustsFontSizeToFit style={{ fontSize: 20 }}>
+            {address?.includes(",")
+              ? address?.slice(address?.indexOf(",") + 2, address.length)
+              : address}
+          </Text>
+        )}
       </View>
     </View>
   );
@@ -117,7 +123,6 @@ const styles = StyleSheet.create({
     color: "black",
   },
   container: {
-    paddingTop: 10,
     width: "90%",
     marginTop: 20,
     height: "20%",
@@ -131,9 +136,12 @@ const styles = StyleSheet.create({
   leftCol: {
     flex: 1.5,
     marginRight: 20,
+    marginLeft: 5,
+    justifyContent: "center",
   },
   rightCol: {
-    paddingRight: 30,
+    marginVertical: 10,
+    marginRight: 20,
     flex: 2,
   },
   call: {

@@ -48,17 +48,30 @@ const NewOrder = ({ driverDoc, hideModal, acceptOrder, pickedUp, arrived }) => {
             width: "100%",
             flexDirection: "row",
             justifyContent: "space-evenly",
+            alignItems: "center",
             marginTop: 10,
             marginBottom: 5,
           }}
         >
-          <Text style={{ color: "white", fontSize: 40 }}>
+          <Text
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            style={{ width: "30%", color: "white", fontSize: 40 }}
+          >
             {driverDoc?.minutes} min
           </Text>
-          <Text style={{ color: "white", fontSize: 40 }}>
+          <Text
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            style={{ width: "30%", color: "white", fontSize: 40 }}
+          >
             {driverDoc?.distance} mi
           </Text>
-          <Text style={{ color: "white", fontSize: 40 }}>
+          <Text
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            style={{ width: "38%", color: "white", fontSize: 40 }}
+          >
             {formatter.format(driverDoc?.price)}
           </Text>
         </View>
