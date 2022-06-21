@@ -8,6 +8,7 @@ import {
   onSnapshot,
   serverTimestamp,
   updateDoc,
+  Timestamp,
 } from "firebase/firestore";
 import "intl";
 import "intl/locale-data/jsonp/en";
@@ -134,6 +135,15 @@ const HomeScreen = ({ navigation, driverProfile }) => {
   const startDeliveringLocationBroadcast = async () => {
     if (!deliveringLocationInterval) {
       const userOrder = doc(db, "UserOrders", driverDoc.userPhone);
+      setTimeout(async () => {
+        await updateDoc(userOrder, {
+          "driver.location": new GeoPoint(
+            currentLocation.latitude,
+            currentLocation.longitude
+          ),
+        });
+      }, 1000);
+
       deliveringLocationInterval = setInterval(async () => {
         getCurrentLocation();
 
@@ -199,25 +209,24 @@ const HomeScreen = ({ navigation, driverProfile }) => {
   }, []);
 
   useEffect(() => {
-    if (
-      driverDoc &&
-      online &&
-      (driverDoc.status === "pending" || driverDoc.status === "accepted")
-    ) {
-      // Filter parcel by dimensions and delivery radius
-      filterParcel();
-    } else if (
-      driverDoc &&
-      online &&
-      (driverDoc.status === "pickup" || driverDoc.status === "dropoff")
-    ) {
-      makeUnavailable();
-      clearTimeout(timeoutTimer);
-      timeoutTimer = null;
-      waitingForOtherDrivers = false;
+    if (driverDoc && online) {
+      switch (driverDoc.status) {
+        case "pending":
+          filterParcel();
+          break;
+        case "accepted":
+          activateModal();
+          break;
+        case "pickup":
+        case "dropoff":
+          activateModal();
+          clearTimeout(timeoutTimer);
+          timeoutTimer = null;
+          waitingForOtherDrivers = false;
 
-      // Start broadcasting live location to user
-      startDeliveringLocationBroadcast();
+          // Start broadcasting live location to user
+          startDeliveringLocationBroadcast();
+      }
     } else if (!driverDoc && online) {
       clearTimeout(timeoutTimer);
       timeoutTimer = null;
@@ -238,28 +247,7 @@ const HomeScreen = ({ navigation, driverProfile }) => {
   const filterParcel = async () => {
     await getCurrentLocation();
 
-    if (
-      (driverDoc.status === "pending" &&
-        (await canTakeParcel(driverDoc, driverProfile, currentLocation))) ||
-      driverDoc.status === "accepted"
-    ) {
-      makeUnavailable();
-
-      setOrigin({
-        location: {
-          lat: driverDoc.pickup.location.latitude,
-          lng: driverDoc.pickup.location.longitude,
-        },
-        description: driverDoc.pickup.postcode,
-      });
-      setDestination({
-        location: {
-          lat: driverDoc.dropoff.location.latitude,
-          lng: driverDoc.dropoff.location.longitude,
-        },
-        description: driverDoc.dropoff.postcode,
-      });
-
+    if (await canTakeParcel(driverDoc, driverProfile, currentLocation)) {
       const { dist, mins } = await getDistance(
         currentLocation,
         driverDoc.pickup.location
@@ -267,33 +255,55 @@ const HomeScreen = ({ navigation, driverProfile }) => {
       setDistToPickup(dist);
       setMinsToPickup(mins);
 
-      setShowModal(true);
-
-      Animated.spring(slideAnim, {
-        toValue: 0,
-        velocity: 3,
-        tension: 2,
-        friction: 8,
-        useNativeDriver: false,
-      }).start();
-
-      if (!timeoutTimer) {
-        timeoutTimer = setTimeout(async () => {
-          // Delete driver order once timeout
-          await deleteDoc(driverOrders);
-
-          // If driver already accepted order issue apology
-          if (waitingForOtherDrivers) {
-            Alert.alert("Sorry, unable to find other drivers to handoff.");
-            waitingForOtherDrivers = false;
-          }
-        }, TIMEOUT_SECONDS * 1000);
-      }
+      activateModal();
     } else {
       // Decline order if not eligible
       await updateDoc(driverOrders, {
         status: "declined",
       });
+    }
+  };
+
+  // Activate the modal popup for a new order
+  const activateModal = () => {
+    makeUnavailable();
+
+    setOrigin({
+      location: {
+        lat: driverDoc.pickup.location.latitude,
+        lng: driverDoc.pickup.location.longitude,
+      },
+      description: driverDoc.pickup.postcode,
+    });
+    setDestination({
+      location: {
+        lat: driverDoc.dropoff.location.latitude,
+        lng: driverDoc.dropoff.location.longitude,
+      },
+      description: driverDoc.dropoff.postcode,
+    });
+
+    setShowModal(true);
+
+    Animated.spring(slideAnim, {
+      toValue: 0,
+      velocity: 3,
+      tension: 2,
+      friction: 8,
+      useNativeDriver: false,
+    }).start();
+
+    if (!timeoutTimer) {
+      timeoutTimer = setTimeout(async () => {
+        // Delete driver order once timeout
+        await deleteDoc(driverOrders);
+
+        // If driver already accepted order issue apology
+        if (waitingForOtherDrivers) {
+          Alert.alert("Sorry, unable to find other drivers to handoff.");
+          waitingForOtherDrivers = false;
+        }
+      }, TIMEOUT_SECONDS * 1000);
     }
   };
 
@@ -325,6 +335,12 @@ const HomeScreen = ({ navigation, driverProfile }) => {
     waitingForOtherDrivers = true;
     await updateDoc(driverOrders, {
       status: "accepted",
+      "pickup.arriveBy": Timestamp.fromMillis(
+        Date.now() + minsToPickup * 60 * 1000
+      ),
+      "dropoff.arriveBy": Timestamp.fromMillis(
+        Date.now() + (minsToPickup + driverDoc.minutes) * 60 * 1000
+      ),
     });
   };
 
