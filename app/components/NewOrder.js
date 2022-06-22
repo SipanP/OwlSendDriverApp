@@ -168,10 +168,14 @@ const NewOrder = ({
             }}
           >
             <Text style={{ color: "white", fontSize: 30 }}>
-              Arrive by: 09:37
+              Arrive by:{" "}
+              {driverDoc.pickup.arriveBy
+                .toDate()
+                .toLocaleTimeString("en-GB")
+                .substring(0, 4)}
             </Text>
             <Text style={{ color: "white", fontSize: 30, paddingLeft: 10 }}>
-              In 10 mins
+              In {driverDoc.minsToPickup} mins
             </Text>
           </View>
           <TouchableOpacity
@@ -197,10 +201,14 @@ const NewOrder = ({
             }}
           >
             <Text style={{ color: "white", fontSize: 30 }}>
-              Arrive by: 09:37
+              Arrive by:{" "}
+              {driverDoc.dropoff.arriveBy
+                .toDate()
+                .toLocaleTimeString("en-GB")
+                .substring(0, 4)}
             </Text>
             <Text style={{ color: "white", fontSize: 30, paddingLeft: 10 }}>
-              In 100 mins
+              In {driverDoc.minutes} mins
             </Text>
           </View>
           <TouchableOpacity
