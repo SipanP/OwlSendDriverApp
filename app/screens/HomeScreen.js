@@ -250,7 +250,8 @@ const HomeScreen = ({ navigation, driverProfile }) => {
     if (await canTakeParcel(driverDoc, driverProfile, currentLocation)) {
       const { dist, mins } = await getDistance(
         currentLocation,
-        driverDoc.pickup.location
+        driverDoc.pickup.location,
+        driverProfile.vehicle
       );
       setDistToPickup(dist);
       setMinsToPickup(mins);
