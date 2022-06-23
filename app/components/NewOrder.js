@@ -27,6 +27,7 @@ const NewOrder = ({
   arrived,
   distToPickup,
   minsToPickup,
+  setVerificationIsFocused,
 }) => {
   var formatter = new Intl.NumberFormat("en-UK", {
     style: "currency",
@@ -354,6 +355,8 @@ const NewOrder = ({
                 style={{ fontWeight: "700", textAlign: "center", fontSize: 18 }}
                 errorMessage={invalidCode && "Invalid Code"}
                 errorStyle={{ textAlign: "center" }}
+                onFocus={() => setVerificationIsFocused(true)}
+                onBlur={() => setVerificationIsFocused(false)}
               />
               <Button
                 title="Enter"

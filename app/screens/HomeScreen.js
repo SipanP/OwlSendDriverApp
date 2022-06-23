@@ -424,13 +424,11 @@ const HomeScreen = ({ navigation, driverProfile }) => {
     setDestination(null);
   };
 
+  const [verificationIsFocused, setVerificationIsFocused] = useState(false);
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={styles.container}
-        keyboardShouldPersistTaps="handled"
-      >
+      <View style={styles.container}>
         <StatusBar style="dark" />
         <Map
           style={{ flex: 1 }}
@@ -488,12 +486,13 @@ const HomeScreen = ({ navigation, driverProfile }) => {
             {
               bottom: 0,
               width: "100%",
-              height: "35%",
+              height: "100%",
               transform: [{ translateY: slideAnim }],
               position: "absolute",
             },
             (driverDoc?.status === "pickup" ||
               driverDoc?.status === "dropoff") && { height: "45%" },
+            verificationIsFocused && { bottom: "30%" },
           ]}
         >
           <NewOrder
@@ -505,9 +504,10 @@ const HomeScreen = ({ navigation, driverProfile }) => {
             arrived={arrived}
             distToPickup={distToPickup}
             minsToPickup={minsToPickup}
+            setVerificationIsFocused={setVerificationIsFocused}
           />
         </Animated.View>
-      </KeyboardAvoidingView>
+      </View>
     </TouchableWithoutFeedback>
   );
 };
