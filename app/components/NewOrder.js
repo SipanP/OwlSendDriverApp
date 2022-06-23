@@ -6,6 +6,13 @@ import { TouchableOpacity } from "react-native";
 import "intl";
 import "intl/locale-data/jsonp/en";
 
+let minutesInterval = null;
+
+const getMinutesLeft = (time) => {
+  const NANOSECONDS_IN_MINUTE = 60000;
+  return Math.max(0, Math.ceil((time - Date.now()) / NANOSECONDS_IN_MINUTE));
+};
+
 const NewOrder = ({
   driverDoc,
   hideModal,
@@ -19,6 +26,28 @@ const NewOrder = ({
     style: "currency",
     currency: "GBP",
   });
+
+  const [minutesLeft, setMinutesLeft] = useState("");
+
+  useEffect(() => {
+    if (minutesInterval) clearInterval(minutesInterval);
+
+    if (driverDoc?.status === "pickup") {
+      setMinutesLeft(getMinutesLeft(driverDoc.pickup.arriveBy.toDate()));
+    } else if (driverDoc?.status === "dropoff") {
+      setMinutesLeft(getMinutesLeft(driverDoc.dropoff.arriveBy.toDate()));
+    }
+
+    minutesInterval = setInterval(() => {
+      if (driverDoc?.status === "pickup") {
+        setMinutesLeft(getMinutesLeft(driverDoc.pickup.arriveBy.toDate()));
+      } else if (driverDoc?.status === "dropoff") {
+        setMinutesLeft(getMinutesLeft(driverDoc.dropoff.arriveBy.toDate()));
+      }
+    }, 1000);
+
+    return () => clearInterval(minutesInterval);
+  }, [driverDoc]);
 
   return (
     <View style={styles.container}>
@@ -162,7 +191,7 @@ const NewOrder = ({
                 .substring(0, 5)}
             </Text>
             <Text style={{ color: "white", fontSize: 30, paddingLeft: 10 }}>
-              In {driverDoc.minsToPickup} mins
+              In {minutesLeft} mins
             </Text>
           </View>
           <TouchableOpacity
@@ -194,7 +223,7 @@ const NewOrder = ({
                 .substring(0, 5)}
             </Text>
             <Text style={{ color: "white", fontSize: 30, paddingLeft: 10 }}>
-              In {driverDoc.minutes} mins
+              In {minutesLeft} mins
             </Text>
           </View>
           <TouchableOpacity
