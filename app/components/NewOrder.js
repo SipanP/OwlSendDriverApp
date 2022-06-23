@@ -6,6 +6,13 @@ import { TouchableOpacity } from "react-native";
 import "intl";
 import "intl/locale-data/jsonp/en";
 
+let minutesInterval = null;
+
+const getMinutesLeft = (time) => {
+  const NANOSECONDS_IN_MINUTE = 60000;
+  return Math.max(0, Math.ceil((time - Date.now()) / NANOSECONDS_IN_MINUTE));
+};
+
 const NewOrder = ({
   driverDoc,
   hideModal,
@@ -19,6 +26,28 @@ const NewOrder = ({
     style: "currency",
     currency: "GBP",
   });
+
+  const [minutesLeft, setMinutesLeft] = useState("");
+
+  useEffect(() => {
+    if (minutesInterval) clearInterval(minutesInterval);
+
+    if (driverDoc?.status === "pickup") {
+      setMinutesLeft(getMinutesLeft(driverDoc.pickup.arriveBy.toDate()));
+    } else if (driverDoc?.status === "dropoff") {
+      setMinutesLeft(getMinutesLeft(driverDoc.dropoff.arriveBy.toDate()));
+    }
+
+    minutesInterval = setInterval(() => {
+      if (driverDoc?.status === "pickup") {
+        setMinutesLeft(getMinutesLeft(driverDoc.pickup.arriveBy.toDate()));
+      } else if (driverDoc?.status === "dropoff") {
+        setMinutesLeft(getMinutesLeft(driverDoc.dropoff.arriveBy.toDate()));
+      }
+    }, 1000);
+
+    return () => clearInterval(minutesInterval);
+  }, [driverDoc]);
 
   return (
     <View style={styles.container}>
@@ -74,7 +103,7 @@ const NewOrder = ({
               paddingLeft: 5,
             }}
           >
-            {driverDoc?.distance + distToPickup} mi
+            {Math.round((driverDoc?.distance + distToPickup) * 100) / 100} mi
           </Text>
           <Text
             numberOfLines={1}
@@ -162,16 +191,34 @@ const NewOrder = ({
                 .substring(0, 5)}
             </Text>
             <Text style={{ color: "white", fontSize: 30, paddingLeft: 10 }}>
-              In {driverDoc.minsToPickup} mins
+              In {minutesLeft} mins
             </Text>
           </View>
           <TouchableOpacity
-            style={[styles.button, styles.pickedUpButton]}
+            style={[
+              styles.button,
+              styles.pickedUpButton,
+              {
+                backgroundColor:
+                  driverDoc?.pickup.type === "Handoff"
+                    ? Colors.secondary
+                    : Colors.dark,
+              },
+            ]}
             onPress={() => {
               pickedUp();
             }}
           >
-            <Text style={{ color: "white", fontSize: 20 }}>PICKED UP</Text>
+            <Text
+              style={{
+                color: "white",
+                fontSize: 20,
+                textTransform: "uppercase",
+                fontWeight: "500",
+              }}
+            >
+              {driverDoc?.pickup.type}
+            </Text>
           </TouchableOpacity>
         </View>
       )}
@@ -194,20 +241,34 @@ const NewOrder = ({
                 .substring(0, 5)}
             </Text>
             <Text style={{ color: "white", fontSize: 30, paddingLeft: 10 }}>
-              In {driverDoc.minutes} mins
+              In {minutesLeft} mins
             </Text>
           </View>
           <TouchableOpacity
             style={[
               styles.button,
               styles.pickedUpButton,
-              { backgroundColor: "purple" },
+              {
+                backgroundColor:
+                  driverDoc?.dropoff.type === "Handoff"
+                    ? Colors.secondary
+                    : Colors.dark,
+              },
             ]}
             onPress={() => {
               arrived();
             }}
           >
-            <Text style={{ color: "white", fontSize: 20 }}>ARRIVED</Text>
+            <Text
+              style={{
+                color: "white",
+                fontSize: 20,
+                textTransform: "uppercase",
+                fontWeight: "500",
+              }}
+            >
+              {driverDoc?.dropoff.type}
+            </Text>
           </TouchableOpacity>
         </View>
       )}
@@ -240,7 +301,6 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   pickedUpButton: {
-    backgroundColor: "black",
     width: "90%",
     marginTop: 10,
     height: 50,

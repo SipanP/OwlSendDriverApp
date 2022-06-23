@@ -30,7 +30,10 @@ const DeliveryInformationCard = ({
       style={[
         styles.container,
         isOnRoute
-          ? [styles.onRoute, { borderColor: "white", borderWidth: 1 }]
+          ? [
+              type === "Handoff" ? styles.onRouteHandoff : styles.onRoute,
+              { borderColor: "white", borderWidth: 1 },
+            ]
           : [styles.notOnRoute, { borderColor: "black", borderWidth: 1 }],
         styles.boxWithShadow,
         fullInfo ? { height: "28%" } : {},
@@ -41,11 +44,7 @@ const DeliveryInformationCard = ({
           h1
           numberOfLines={1}
           adjustsFontSizeToFit
-          style={[
-            styles.allText,
-            isOnRoute ? styles.onRoute : styles.notOnRoute,
-            styles.type,
-          ]}
+          style={[isOnRoute && styles.allText, styles.type]}
         >
           {type}
         </Text>
@@ -69,11 +68,7 @@ const DeliveryInformationCard = ({
             h4
             numberOfLines={1}
             adjustsFontSizeToFit
-            style={[
-              styles.allText,
-              isOnRoute ? styles.onRoute : styles.notOnRoute,
-              { fontWeight: "500" },
-            ]}
+            style={[isOnRoute && styles.allText, { fontWeight: "500" }]}
           >
             {name}
           </Text>
@@ -127,7 +122,11 @@ const styles = StyleSheet.create({
     color: "white",
   },
   onRoute: {
-    backgroundColor: "black",
+    backgroundColor: Colors.dark,
+    color: "white",
+  },
+  onRouteHandoff: {
+    backgroundColor: Colors.secondary,
     color: "white",
   },
   notOnRoute: {
@@ -164,5 +163,10 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignSelf: "center",
     marginTop: "5%",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+    elevation: 5,
   },
 });

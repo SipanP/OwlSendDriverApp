@@ -49,7 +49,7 @@ const Map = ({ origin, destination, currentLocation, driverDoc }) => {
         longitudeDelta: 0.05,
       }}
     >
-      {origin?.location && (
+      {origin?.location && driverDoc?.pickup.type != "Handoff" && (
         <Marker
           coordinate={{
             latitude: origin.location.lat,
@@ -65,7 +65,23 @@ const Map = ({ origin, destination, currentLocation, driverDoc }) => {
           />
         </Marker>
       )}
-      {destination?.location && (
+      {origin?.location && driverDoc?.pickup.type === "Handoff" && (
+        <Marker
+          coordinate={{
+            latitude: origin.location.lat,
+            longitude: origin.location.lng,
+          }}
+          title="Handoff"
+          description={origin.description}
+          identifier="origin"
+        >
+          <Image
+            source={require("../assets/relay.png")}
+            style={{ height: 30, width: 30 }}
+          />
+        </Marker>
+      )}
+      {destination?.location && driverDoc?.dropoff.type != "Handoff" && (
         <Marker
           coordinate={{
             latitude: destination.location.lat,
@@ -77,6 +93,22 @@ const Map = ({ origin, destination, currentLocation, driverDoc }) => {
         >
           <Image
             source={require("../assets/destination.png")}
+            style={{ height: 30, width: 30 }}
+          />
+        </Marker>
+      )}
+      {destination?.location && driverDoc?.dropoff.type === "Handoff" && (
+        <Marker
+          coordinate={{
+            latitude: destination.location.lat,
+            longitude: destination.location.lng,
+          }}
+          title="Handoff"
+          description={destination.description}
+          identifier="destination"
+        >
+          <Image
+            source={require("../assets/relay.png")}
             style={{ height: 30, width: 30 }}
           />
         </Marker>
