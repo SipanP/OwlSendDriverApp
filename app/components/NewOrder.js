@@ -195,12 +195,30 @@ const NewOrder = ({
             </Text>
           </View>
           <TouchableOpacity
-            style={[styles.button, styles.pickedUpButton]}
+            style={[
+              styles.button,
+              styles.pickedUpButton,
+              {
+                backgroundColor:
+                  driverDoc?.pickup.type === "Handoff"
+                    ? Colors.secondary
+                    : Colors.dark,
+              },
+            ]}
             onPress={() => {
               pickedUp();
             }}
           >
-            <Text style={{ color: "white", fontSize: 20 }}>PICKED UP</Text>
+            <Text
+              style={{
+                color: "white",
+                fontSize: 20,
+                textTransform: "uppercase",
+                fontWeight: "500",
+              }}
+            >
+              {driverDoc?.pickup.type}
+            </Text>
           </TouchableOpacity>
         </View>
       )}
@@ -230,13 +248,27 @@ const NewOrder = ({
             style={[
               styles.button,
               styles.pickedUpButton,
-              { backgroundColor: "purple" },
+              {
+                backgroundColor:
+                  driverDoc?.dropoff.type === "Handoff"
+                    ? Colors.secondary
+                    : Colors.dark,
+              },
             ]}
             onPress={() => {
               arrived();
             }}
           >
-            <Text style={{ color: "white", fontSize: 20 }}>ARRIVED</Text>
+            <Text
+              style={{
+                color: "white",
+                fontSize: 20,
+                textTransform: "uppercase",
+                fontWeight: "500",
+              }}
+            >
+              {driverDoc?.dropoff.type}
+            </Text>
           </TouchableOpacity>
         </View>
       )}
@@ -269,7 +301,6 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   pickedUpButton: {
-    backgroundColor: "black",
     width: "90%",
     marginTop: 10,
     height: 50,
