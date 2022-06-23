@@ -96,22 +96,18 @@ const HomeScreen = ({ navigation, driverProfile }) => {
   });
 
   const makeAvailable = async () => {
-    if (!available) {
-      setAvailable(true);
-      await updateDoc(registeredDrivers, {
-        available: true,
-      });
-    }
+    setAvailable(true);
+    await updateDoc(registeredDrivers, {
+      available: true,
+    });
     // startAvailableLocationBroadcast();
   };
 
   const makeUnavailable = async () => {
-    if (available) {
-      setAvailable(false);
-      await updateDoc(registeredDrivers, {
-        available: false,
-      });
-    }
+    setAvailable(false);
+    await updateDoc(registeredDrivers, {
+      available: false,
+    });
     // stopAvailableLocationBroadcast();
   };
 
@@ -135,24 +131,21 @@ const HomeScreen = ({ navigation, driverProfile }) => {
   const startDeliveringLocationBroadcast = async () => {
     if (!deliveringLocationInterval) {
       const userOrder = doc(db, "UserOrders", driverDoc.userPhone);
-      setTimeout(async () => {
-        await updateDoc(userOrder, {
-          "driver.location": new GeoPoint(
-            currentLocation.latitude,
-            currentLocation.longitude
-          ),
-        });
-      }, 1000);
 
       deliveringLocationInterval = setInterval(async () => {
-        getCurrentLocation();
+        await getCurrentLocation();
 
-        await updateDoc(userOrder, {
-          "driver.location": new GeoPoint(
-            currentLocation.latitude,
-            currentLocation.longitude
-          ),
-        });
+        if (
+          driverDoc.pickup.type === "Pickup" ||
+          driverDoc.status === "dropoff"
+        ) {
+          await updateDoc(userOrder, {
+            "driver.location": new GeoPoint(
+              currentLocation.latitude,
+              currentLocation.longitude
+            ),
+          });
+        }
       }, DELIVERING_INTERVAL_SECONDS * 1000);
     }
   };
@@ -165,7 +158,7 @@ const HomeScreen = ({ navigation, driverProfile }) => {
   const startAvailableLocationBroadcast = async () => {
     if (!availableLocationInterval) {
       availableLocationInterval = 1;
-      getCurrentLocation();
+      await getCurrentLocation();
       await updateDoc(registeredDrivers, {
         location: new GeoPoint(
           currentLocation.latitude,
@@ -174,7 +167,7 @@ const HomeScreen = ({ navigation, driverProfile }) => {
       });
 
       availableLocationInterval = setInterval(async () => {
-        getCurrentLocation();
+        await getCurrentLocation();
         await updateDoc(registeredDrivers, {
           location: new GeoPoint(
             currentLocation.latitude,
@@ -217,6 +210,11 @@ const HomeScreen = ({ navigation, driverProfile }) => {
         case "accepted":
           activateModal();
           break;
+        case "declined":
+          clearTimeout(timeoutTimer);
+          timeoutTimer = null;
+          hideModal();
+          break;
         case "pickup":
         case "dropoff":
           activateModal();
@@ -245,6 +243,7 @@ const HomeScreen = ({ navigation, driverProfile }) => {
 
   // Filter parcel by dimensions and delivery radius
   const filterParcel = async () => {
+    await makeUnavailable();
     await getCurrentLocation();
 
     if (await canTakeParcel(driverDoc, driverProfile, currentLocation)) {
@@ -261,6 +260,7 @@ const HomeScreen = ({ navigation, driverProfile }) => {
       await updateDoc(driverOrders, {
         status: "declined",
       });
+      await makeAvailable();
     }
   };
 
@@ -341,6 +341,12 @@ const HomeScreen = ({ navigation, driverProfile }) => {
       "dropoff.arriveBy": Timestamp.fromMillis(
         Date.now() + (minsToPickup + driverDoc.minutes) * 60 * 1000
       ),
+      name: driverProfile.firstName + " " + driverProfile.lastName,
+      vehicle: driverProfile.vehicle,
+      location: new GeoPoint(
+        currentLocation.latitude,
+        currentLocation.longitude
+      ),
     });
   };
 
@@ -358,9 +364,9 @@ const HomeScreen = ({ navigation, driverProfile }) => {
       });
     } else if (driverDoc.pickup.type === "Handoff") {
       await updateDoc(userOrder, {
-        name: driverProfile.firstName + " " + driverProfile.lastName,
-        phone: driverProfile.phone,
-        vehicle: driverProfile.vehicle,
+        "driver.name": driverProfile.firstName + " " + driverProfile.lastName,
+        "driver.phone": driverProfile.phone,
+        "driver.vehicle": driverProfile.vehicle,
         handoffTime: serverTimestamp(),
       });
     }

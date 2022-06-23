@@ -48,13 +48,10 @@ const dimensionsAcceptable = (
   driverDimensions.sort((a, b) => a - b).reverse();
 
   return (
-    (isNaN(driverDimensions[0]) ||
-      driverDimensions[0] >= parcelDimensions[0]) &&
-    (isNaN(driverDimensions[1]) ||
-      driverDimensions[1] >= parcelDimensions[1]) &&
-    (isNaN(driverDimensions[2]) ||
-      driverDimensions[2] >= parcelDimensions[2]) &&
-    (isNaN(driverWeight) || driverWeight >= parcelWeight)
+    (!driverDimensions[0] || driverDimensions[0] >= parcelDimensions[0]) &&
+    (!driverDimensions[1] || driverDimensions[1] >= parcelDimensions[1]) &&
+    (!driverDimensions[2] || driverDimensions[2] >= parcelDimensions[2]) &&
+    (!driverWeight || driverWeight >= parcelWeight)
   );
 };
 

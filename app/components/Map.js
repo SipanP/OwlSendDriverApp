@@ -10,7 +10,15 @@ const Map = ({ origin, destination, currentLocation, driverDoc }) => {
   useEffect(() => {
     if (!origin || !destination) return;
     mapRef.current.fitToSuppliedMarkers(["origin", "destination"], {
-      edgePadding: { top: 50, right: 50, bottom: 300, left: 50 },
+      edgePadding: {
+        top: 80,
+        right: 50,
+        bottom:
+          driverDoc.status === "pending" || driverDoc.status === "accepted"
+            ? 330
+            : 430,
+        left: 50,
+      },
     });
   }, [origin, destination]);
 
