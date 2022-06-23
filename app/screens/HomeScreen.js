@@ -486,7 +486,7 @@ const HomeScreen = ({ navigation, driverProfile }) => {
             {
               bottom: 0,
               width: "100%",
-              height: "100%",
+              height: "35%",
               transform: [{ translateY: slideAnim }],
               position: "absolute",
             },

@@ -357,6 +357,7 @@ const NewOrder = ({
                 errorStyle={{ textAlign: "center" }}
                 onFocus={() => setVerificationIsFocused(true)}
                 onBlur={() => setVerificationIsFocused(false)}
+                onSubmitEditing={() => setVerificationIsFocused(false)}
               />
               <Button
                 title="Enter"
@@ -364,6 +365,7 @@ const NewOrder = ({
                 onPress={() => {
                   if (verificationCode === driverDoc?.dropoff.code) {
                     arrived();
+                    setVerificationIsFocused(false);
                   } else {
                     setInvalidCode(true);
                   }
