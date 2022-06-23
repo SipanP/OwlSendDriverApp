@@ -13,7 +13,6 @@
     "@react-native-async-storage/async-storage": "~1.17.3",
     "@react-navigation/native": "^6.0.10",
     "@react-navigation/native-stack": "^6.6.2",
-    "@reduxjs/toolkit": "^1.8.2",
     "expo": "~45.0.0",
     "expo-location": "~14.2.2",
     "expo-status-bar": "~1.3.0",
@@ -33,8 +32,7 @@
     "react-native-phone-call": "^1.2.0",
     "react-native-safe-area-context": "^3.4.1",
     "react-native-screens": "~3.11.1",
-    "react-native-web": "0.17.7",
-    "react-redux": "^8.0.2"
+    "react-native-web": "0.17.7"
   },
   "devDependencies": {
     "@babel/cli": "^7.17.10",
