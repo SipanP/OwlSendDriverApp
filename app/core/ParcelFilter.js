@@ -70,7 +70,7 @@ const distanceAcceptable = async (
     pickup,
     driverProfile.vehicle
   );
-  const { dist: distToDest, mins: minsToDest } = await getDistance(
+  const { dist: distToDropoff, mins: minsToDropoff } = await getDistance(
     baseLocation,
     dropoff,
     driverProfile.vehicle
@@ -79,8 +79,8 @@ const distanceAcceptable = async (
   return (
     0 <= distToPickup &&
     distToPickup <= driverProfile.radius &&
-    0 <= distToDest &&
-    distToDest <= driverProfile.radius
+    0 <= distToDropoff &&
+    distToDropoff <= driverProfile.radius
   );
 };
 

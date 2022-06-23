@@ -19,18 +19,7 @@ const NewOrder = ({
     style: "currency",
     currency: "GBP",
   });
-  const [accepted, setAccepted] = useState(false);
-  const [delivering, setDelivering] = useState(false);
-  if (
-    driverDoc?.status === "pending" ||
-    driverDoc?.status === "accepted" ||
-    driverDoc?.status === "declined"
-  ) {
-    var fullInfo = false;
-  } else {
-    // pickup, dropoff, arrived
-    var fullInfo = true;
-  }
+
   return (
     <View style={styles.container}>
       <DeliveryInformationCard
