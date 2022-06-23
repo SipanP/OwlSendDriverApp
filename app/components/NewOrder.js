@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View, ActivityIndicator } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import DeliveryInformationCard from "./DeliveryInformationCard";
 import Colors from "../core/Colors";
 import { TouchableOpacity } from "react-native";
@@ -103,7 +103,6 @@ const NewOrder = ({
             style={[styles.button, { backgroundColor: "#D2222D" }]}
             onPress={() => {
               hideModal();
-              setAccepted(false);
             }}
           >
             <Text style={{ color: "white", fontSize: 20 }}>DECLINE</Text>
@@ -112,7 +111,6 @@ const NewOrder = ({
             style={[styles.button, { backgroundColor: "#238823" }]}
             onPress={() => {
               acceptOrder();
-              setAccepted(true);
             }}
           >
             <Text style={{ color: "white", fontSize: 20 }}>ACCEPT</Text>
@@ -161,7 +159,7 @@ const NewOrder = ({
               {driverDoc.pickup.arriveBy
                 .toDate()
                 .toLocaleTimeString("en-GB")
-                .substring(0, 4)}
+                .substring(0, 5)}
             </Text>
             <Text style={{ color: "white", fontSize: 30, paddingLeft: 10 }}>
               In {driverDoc.minsToPickup} mins
@@ -171,7 +169,6 @@ const NewOrder = ({
             style={[styles.button, styles.pickedUpButton]}
             onPress={() => {
               pickedUp();
-              setDelivering(true);
             }}
           >
             <Text style={{ color: "white", fontSize: 20 }}>PICKED UP</Text>
@@ -194,7 +191,7 @@ const NewOrder = ({
               {driverDoc.dropoff.arriveBy
                 .toDate()
                 .toLocaleTimeString("en-GB")
-                .substring(0, 4)}
+                .substring(0, 5)}
             </Text>
             <Text style={{ color: "white", fontSize: 30, paddingLeft: 10 }}>
               In {driverDoc.minutes} mins
