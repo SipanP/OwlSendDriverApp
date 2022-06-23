@@ -214,9 +214,11 @@ const HomeScreen = ({ navigation, driverProfile }) => {
           activateModal();
           break;
         case "declined":
-          clearTimeout(timeoutTimer);
-          timeoutTimer = null;
-          hideModal();
+          if (showModal) {
+            clearTimeout(timeoutTimer);
+            timeoutTimer = null;
+            hideModal();
+          }
           break;
         case "pickup":
         case "dropoff":
