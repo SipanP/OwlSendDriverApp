@@ -4,6 +4,7 @@ import { Text } from "react-native-elements";
 import call from "react-native-phone-call";
 import IonIcon from "react-native-vector-icons/Ionicons";
 import Colors from "../core/Colors";
+import openMap from "react-native-open-maps";
 
 const DeliveryInformationCard = ({
   name,
@@ -78,17 +79,27 @@ const DeliveryInformationCard = ({
           </Text>
         )}
         {fullInfo && (
-          <Text
-            numberOfLines={5}
-            adjustsFontSizeToFit
-            style={[
-              styles.allText,
-              isOnRoute ? styles.onRoute : styles.notOnRoute,
-              { flex: 1 },
-            ]}
+          <TouchableOpacity
+            onPress={() =>
+              openMap({
+                end: address,
+                navigate: true,
+              })
+            }
+            style={{ flex: 1 }}
           >
-            {address}
-          </Text>
+            <Text
+              numberOfLines={5}
+              adjustsFontSizeToFit
+              style={[
+                styles.allText,
+                isOnRoute ? styles.onRoute : styles.notOnRoute,
+                { flex: 1, color: Colors.lightPrimary },
+              ]}
+            >
+              {address}
+            </Text>
+          </TouchableOpacity>
         )}
         {!fullInfo && (
           <Text numberOfLines={3} adjustsFontSizeToFit style={{ fontSize: 20 }}>

@@ -29,6 +29,7 @@
     "react-native-maps": "0.30.2",
     "react-native-maps-directions": "^1.8.0",
     "react-native-modal": "^13.0.1",
+    "react-native-open-maps": "^0.4.0",
     "react-native-phone-call": "^1.2.0",
     "react-native-safe-area-context": "^3.4.1",
     "react-native-screens": "~3.11.1",
