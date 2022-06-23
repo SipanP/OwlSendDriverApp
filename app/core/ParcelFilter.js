@@ -1,14 +1,14 @@
 // Helper function to calculate distance and minutes between two geolocation points.
-export const getDistance = async (orig, dest) => {
+export const getDistance = async (orig, dest, mode) => {
   let dist = 0;
   let mins = 0;
 
   if (orig && dest) {
     const url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${
       orig.latitude
-    },${orig.longitude}&destinations=${dest.latitude},${
-      dest.longitude
-    }&units=imperial&key=${"AIzaSyCE2Ct-iHuI_2nNALaRghtfpNBj1gPhfcY"}`;
+    },${orig.longitude}&destinations=${dest.latitude},${dest.longitude}&mode=${
+      mode == 0 ? "bicycling" : "driving"
+    }&units=imperial&key=AIzaSyCE2Ct-iHuI_2nNALaRghtfpNBj1gPhfcY`;
 
     const res = await fetch(url);
 
@@ -67,11 +67,13 @@ const distanceAcceptable = async (
 
   const { dist: distToPickup, mins: minsToPickup } = await getDistance(
     baseLocation,
-    pickup
+    pickup,
+    driverProfile.vehicle
   );
   const { dist: distToDest, mins: minsToDest } = await getDistance(
     baseLocation,
-    dropoff
+    dropoff,
+    driverProfile.vehicle
   );
 
   return (
