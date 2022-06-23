@@ -369,6 +369,7 @@ const HomeScreen = ({ navigation, driverProfile }) => {
         "driver.phone": driverProfile.phone,
         "driver.vehicle": driverProfile.vehicle,
         handoffTime: serverTimestamp(),
+        handoffed: true,
       });
     }
   };
