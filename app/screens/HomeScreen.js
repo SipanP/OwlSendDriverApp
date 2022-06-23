@@ -397,6 +397,12 @@ const HomeScreen = ({ navigation, driverProfile }) => {
         status: "Delivered",
         dropoffTime: serverTimestamp(),
       });
+    } else if (driverDoc.dropoff.type === "Handoff") {
+      // Update other driver when verification code entered
+      const userOrder = doc(db, "DriverOrders", driverDoc.dropoff.phone);
+      await updateDoc(userOrder, {
+        status: "dropoff",
+      });
     }
 
     // Increment session earned
