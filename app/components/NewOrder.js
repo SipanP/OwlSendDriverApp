@@ -103,7 +103,7 @@ const NewOrder = ({
               paddingLeft: 5,
             }}
           >
-            {driverDoc?.distance + distToPickup} mi
+            {Math.round((driverDoc?.distance + distToPickup) * 100) / 100} mi
           </Text>
           <Text
             numberOfLines={1}
