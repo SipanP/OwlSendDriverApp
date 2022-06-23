@@ -21,6 +21,9 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Keyboard,
+  KeyboardAvoidingView,
+  TouchableWithoutFeedback,
 } from "react-native";
 import Modal from "react-native-modal";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
@@ -414,84 +417,90 @@ const HomeScreen = ({ navigation, driverProfile }) => {
   };
 
   return (
-    <View style={styles.container}>
-      <StatusBar style="dark" />
-      <Map
-        style={{ flex: 1 }}
-        origin={origin}
-        destination={destination}
-        currentLocation={currentLocation}
-        driverDoc={driverDoc}
-      />
-      <View style={styles.sessionEarned}>
-        <Text style={{ fontWeight: "700" }}>SESSION</Text>
-        <Text style={{ fontSize: 26, fontWeight: "700" }}>
-          {formatter.format(sessionEarned)}
-        </Text>
-      </View>
-      {!showModal && (
-        <View style={styles.settingsIcon}>
-          <TouchableOpacity
-            onPress={() => navigation.navigate("StartRegister")}
-          >
-            <FontAwesome name="cog" size={50} color={Colors.primary} />
-          </TouchableOpacity>
-        </View>
-      )}
-      <View
-        style={{
-          position: "absolute",
-          left: 0,
-          right: 0,
-          bottom: 140,
-          alignItems: "center",
-        }}
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={styles.container}
+        keyboardShouldPersistTaps="handled"
       >
-        <View style={{ bottom: 0 }}>
-          {!online && !showModal && <GoButton onPress={goOnline} />}
-          {online && !showModal && <StopButton onPress={goOffline} />}
-        </View>
-      </View>
-
-      <Modal
-        animationType="fade"
-        isVisible={moneyModalVisible}
-        onRequestClose={() => {
-          setMoneyModalVisible(!moneyModalVisible);
-        }}
-      >
-        <View style={{ flexDirection: "row", justifyContent: "center" }}>
-          <Text style={{ color: "white", fontSize: 30, fontWeight: "700" }}>
-            You've earned {formatter.format(driverDoc?.price)}!
-          </Text>
-          <MaterialIcons name="celebration" size={30} color="white" />
-        </View>
-      </Modal>
-      <Animated.View
-        style={[
-          {
-            bottom: 0,
-            width: "100%",
-            height: "35%",
-            transform: [{ translateY: slideAnim }],
-            position: "absolute",
-          },
-          (driverDoc?.status === "pickup" ||
-            driverDoc?.status === "dropoff") && { height: "45%" },
-        ]}
-      >
-        <NewOrder
+        <StatusBar style="dark" />
+        <Map
+          style={{ flex: 1 }}
+          origin={origin}
+          destination={destination}
+          currentLocation={currentLocation}
           driverDoc={driverDoc}
-          hideModal={hideModal}
-          acceptOrder={acceptOrder}
-          style={styles.modal}
-          pickedUp={pickedUp}
-          arrived={arrived}
-          distToPickup={distToPickup}
-          minsToPickup={minsToPickup}
         />
-      </Animated.View>
-    </View>
+        <View style={styles.sessionEarned}>
+          <Text style={{ fontWeight: "700" }}>SESSION</Text>
+          <Text style={{ fontSize: 26, fontWeight: "700" }}>
+            {formatter.format(sessionEarned)}
+          </Text>
+        </View>
+        {!showModal && (
+          <View style={styles.settingsIcon}>
+            <TouchableOpacity
+              onPress={() => navigation.navigate("StartRegister")}
+            >
+              <FontAwesome name="cog" size={50} color={Colors.primary} />
+            </TouchableOpacity>
+          </View>
+        )}
+        <View
+          style={{
+            position: "absolute",
+            left: 0,
+            right: 0,
+            bottom: 140,
+            alignItems: "center",
+          }}
+        >
+          <View style={{ bottom: 0 }}>
+            {!online && !showModal && <GoButton onPress={goOnline} />}
+            {online && !showModal && <StopButton onPress={goOffline} />}
+          </View>
+        </View>
+
+        <Modal
+          animationType="fade"
+          isVisible={moneyModalVisible}
+          onRequestClose={() => {
+            setMoneyModalVisible(!moneyModalVisible);
+          }}
+        >
+          <View style={{ flexDirection: "row", justifyContent: "center" }}>
+            <Text style={{ color: "white", fontSize: 30, fontWeight: "700" }}>
+              You've earned {formatter.format(driverDoc?.price)}!
+            </Text>
+            <MaterialIcons name="celebration" size={30} color="white" />
+          </View>
+        </Modal>
+        <Animated.View
+          style={[
+            {
+              bottom: 0,
+              width: "100%",
+              height: "35%",
+              transform: [{ translateY: slideAnim }],
+              position: "absolute",
+            },
+            (driverDoc?.status === "pickup" ||
+              driverDoc?.status === "dropoff") && { height: "45%" },
+          ]}
+        >
+          <NewOrder
+            driverDoc={driverDoc}
+            hideModal={hideModal}
+            acceptOrder={acceptOrder}
+            style={styles.modal}
+            pickedUp={pickedUp}
+            arrived={arrived}
+            distToPickup={distToPickup}
+            minsToPickup={minsToPickup}
+          />
+        </Animated.View>
+      </KeyboardAvoidingView>
+    </TouchableWithoutFeedback>
   );
 };
 

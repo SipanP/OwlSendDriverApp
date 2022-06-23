@@ -1,10 +1,16 @@
-import { StyleSheet, Text, View, ActivityIndicator } from "react-native";
-import React, { useEffect, useState } from "react";
-import DeliveryInformationCard from "./DeliveryInformationCard";
-import Colors from "../core/Colors";
-import { TouchableOpacity } from "react-native";
 import "intl";
 import "intl/locale-data/jsonp/en";
+import { useEffect, useState } from "react";
+import {
+  ActivityIndicator,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { Button, Input } from "react-native-elements";
+import Colors from "../core/Colors";
+import DeliveryInformationCard from "./DeliveryInformationCard";
 
 let minutesInterval = null;
 
@@ -28,8 +34,15 @@ const NewOrder = ({
   });
 
   const [minutesLeft, setMinutesLeft] = useState("");
+  const [verificationCode, setVerificationCode] = useState("");
+  const [invalidCode, setInvalidCode] = useState(false);
+  const [verifying, setVerifying] = useState(false);
 
   useEffect(() => {
+    setVerifying(false);
+    setVerificationCode("");
+    setInvalidCode(false);
+
     if (minutesInterval) clearInterval(minutesInterval);
 
     if (driverDoc?.status === "pickup") {
@@ -194,32 +207,76 @@ const NewOrder = ({
               In {minutesLeft} mins
             </Text>
           </View>
-          <TouchableOpacity
-            style={[
-              styles.button,
-              styles.pickedUpButton,
-              {
-                backgroundColor:
-                  driverDoc?.pickup.type === "Handoff"
-                    ? Colors.secondary
-                    : Colors.dark,
-              },
-            ]}
-            onPress={() => {
-              pickedUp();
-            }}
-          >
-            <Text
-              style={{
-                color: "white",
-                fontSize: 20,
-                textTransform: "uppercase",
-                fontWeight: "500",
+          {!verifying && (
+            <TouchableOpacity
+              style={[
+                styles.button,
+                styles.pickedUpButton,
+                {
+                  backgroundColor:
+                    driverDoc?.pickup.type === "Handoff"
+                      ? Colors.secondary
+                      : Colors.dark,
+                },
+              ]}
+              onPress={() => {
+                if (driverDoc?.pickup.type === "Handoff") {
+                  setVerifying(true);
+                } else {
+                  pickedUp();
+                }
               }}
             >
-              {driverDoc?.pickup.type}
-            </Text>
-          </TouchableOpacity>
+              <Text
+                style={{
+                  color: "white",
+                  fontSize: 20,
+                  textTransform: "uppercase",
+                  fontWeight: "500",
+                }}
+              >
+                {driverDoc?.pickup.type}
+              </Text>
+            </TouchableOpacity>
+          )}
+          {verifying && (
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-evenly",
+                alignItems: "center",
+                width: "90%",
+                padding: 10,
+                marginTop: 10,
+                backgroundColor: "white",
+                borderRadius: 15,
+              }}
+            >
+              <Text
+                numberOfLines={1}
+                adjustsFontSizeToFit
+                style={{
+                  fontSize: 30,
+                  fontWeight: "500",
+                  width: "70%",
+                }}
+              >
+                Verification Code:
+              </Text>
+              <Text
+                numberOfLines={1}
+                adjustsFontSizeToFit
+                style={{
+                  fontSize: 30,
+                  marginLeft: 10,
+                  fontWeight: "700",
+                  width: "30%",
+                }}
+              >
+                {driverDoc?.pickup.code}
+              </Text>
+            </View>
+          )}
         </View>
       )}
       {driverDoc?.status === "dropoff" && (
@@ -244,32 +301,76 @@ const NewOrder = ({
               In {minutesLeft} mins
             </Text>
           </View>
-          <TouchableOpacity
-            style={[
-              styles.button,
-              styles.pickedUpButton,
-              {
-                backgroundColor:
-                  driverDoc?.dropoff.type === "Handoff"
-                    ? Colors.secondary
-                    : Colors.dark,
-              },
-            ]}
-            onPress={() => {
-              arrived();
-            }}
-          >
-            <Text
-              style={{
-                color: "white",
-                fontSize: 20,
-                textTransform: "uppercase",
-                fontWeight: "500",
+          {!verifying && (
+            <TouchableOpacity
+              style={[
+                styles.button,
+                styles.pickedUpButton,
+                {
+                  backgroundColor:
+                    driverDoc?.dropoff.type === "Handoff"
+                      ? Colors.secondary
+                      : Colors.dark,
+                },
+              ]}
+              onPress={() => {
+                setVerifying(true);
               }}
             >
-              {driverDoc?.dropoff.type}
-            </Text>
-          </TouchableOpacity>
+              <Text
+                style={{
+                  color: "white",
+                  fontSize: 20,
+                  textTransform: "uppercase",
+                  fontWeight: "500",
+                }}
+              >
+                {driverDoc?.dropoff.type}
+              </Text>
+            </TouchableOpacity>
+          )}
+          {verifying && (
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "center",
+                alignItems: "center",
+                paddingHorizontal: 10,
+                backgroundColor: "white",
+                borderRadius: 10,
+              }}
+            >
+              <Input
+                placeholder="Verification Code"
+                keyboardType="numeric"
+                value={verificationCode}
+                onChangeText={(text) => {
+                  setVerificationCode(text);
+                }}
+                containerStyle={{
+                  width: "50%",
+                  backgroundColor: "white",
+                }}
+                style={{ fontWeight: "700", textAlign: "center", fontSize: 18 }}
+                errorMessage={invalidCode && "Invalid Code"}
+                errorStyle={{ textAlign: "center" }}
+              />
+              <Button
+                title="Enter"
+                raised
+                onPress={() => {
+                  if (verificationCode === driverDoc?.dropoff.code) {
+                    arrived();
+                  } else {
+                    setInvalidCode(true);
+                  }
+                }}
+                containerStyle={styles.verifyButtonContainer}
+                buttonStyle={styles.verifyButtonStyle}
+                titleStyle={{ fontWeight: "500" }}
+              />
+            </View>
+          )}
         </View>
       )}
     </View>
@@ -305,5 +406,17 @@ const styles = StyleSheet.create({
     marginTop: 10,
     height: 50,
     justifyContent: "center",
+  },
+  verifyButtonContainer: {
+    borderRadius: 6,
+    height: 40,
+    width: 90,
+    marginLeft: 5,
+  },
+
+  verifyButtonStyle: {
+    backgroundColor: Colors.dark,
+    borderRadius: 6,
+    height: 40,
   },
 });

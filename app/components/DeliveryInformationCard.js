@@ -87,9 +87,13 @@ const DeliveryInformationCard = ({
               numberOfLines={5}
               adjustsFontSizeToFit
               style={[
-                styles.allText,
-                isOnRoute ? styles.onRoute : styles.notOnRoute,
-                { flex: 1, color: Colors.lightPrimary },
+                isOnRoute && styles.allText,
+                {
+                  flex: 1,
+                  color: Colors.lightPrimary,
+                  fontWeight: "500",
+                  textDecorationLine: "underline",
+                },
               ]}
             >
               {address}
