@@ -236,7 +236,9 @@ const NewOrder = ({
                   fontWeight: "500",
                 }}
               >
-                {driverDoc?.pickup.type}
+                {driverDoc?.pickup.type === "Pickup"
+                  ? "Picked Up"
+                  : "Handed Off"}
               </Text>
             </TouchableOpacity>
           )}
@@ -326,7 +328,9 @@ const NewOrder = ({
                   fontWeight: "500",
                 }}
               >
-                {driverDoc?.dropoff.type}
+                {driverDoc?.dropoff.type === "Deliver"
+                  ? "Delivered"
+                  : "Handed Off"}
               </Text>
             </TouchableOpacity>
           )}
