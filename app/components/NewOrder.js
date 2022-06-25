@@ -19,6 +19,14 @@ const getMinutesLeft = (time) => {
   return Math.max(0, Math.ceil((time - Date.now()) / NANOSECONDS_IN_MINUTE));
 };
 
+const formatTime = (time) => {
+  return (
+    time.toDate().getHours().toString().padStart(2, "0") +
+    ":" +
+    time.toDate().getMinutes().toString().padStart(2, "0")
+  );
+};
+
 const NewOrder = ({
   driverDoc,
   hideModal,
@@ -198,11 +206,7 @@ const NewOrder = ({
             }}
           >
             <Text style={{ color: "white", fontSize: 30 }}>
-              Arrive by:{" "}
-              {driverDoc.pickup.arriveBy
-                .toDate()
-                .toLocaleTimeString("en-GB")
-                .substring(0, 5)}
+              Arrive by: {formatTime(driverDoc.pickup.arriveBy)}
             </Text>
             <Text style={{ color: "white", fontSize: 30, paddingLeft: 10 }}>
               In {minutesLeft} mins
@@ -294,11 +298,7 @@ const NewOrder = ({
             }}
           >
             <Text style={{ color: "white", fontSize: 30 }}>
-              Arrive by:{" "}
-              {driverDoc.dropoff.arriveBy
-                .toDate()
-                .toLocaleTimeString("en-GB")
-                .substring(0, 5)}
+              Arrive by: {formatTime(driverDoc.dropoff.arriveBy)}
             </Text>
             <Text style={{ color: "white", fontSize: 30, paddingLeft: 10 }}>
               In {minutesLeft} mins
