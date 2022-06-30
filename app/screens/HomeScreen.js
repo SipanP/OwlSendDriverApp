@@ -220,8 +220,11 @@ const HomeScreen = ({ navigation, driverProfile }) => {
             hideModal();
           }
           break;
-        case "pickup":
         case "dropoff":
+          if (driverDoc.pickup.type === "Handoff") {
+            pickedUp();
+          }
+        case "pickup":
           activateModal();
           clearTimeout(timeoutTimer);
           timeoutTimer = null;
@@ -357,9 +360,11 @@ const HomeScreen = ({ navigation, driverProfile }) => {
   };
 
   const pickedUp = async () => {
-    await updateDoc(driverOrders, {
-      status: "dropoff",
-    });
+    if (driverDoc.pickup.type != "Handoff") {
+      await updateDoc(driverOrders, {
+        status: "dropoff",
+      });
+    }
 
     // Update user order on firebase to notify user delivering info
     const userOrder = doc(db, "UserOrders", driverDoc.userPhone);
